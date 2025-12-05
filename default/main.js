@@ -261,9 +261,11 @@ function deleteShortUrl(delKeyPhrase) {
 }
 
 function queryVisitCount(qryKeyPhrase) {
-  document.getElementById("qryCntBtn-" + qryKeyPhrase).disabled = true;
-  document.getElementById("qryCntBtn-" + qryKeyPhrase).innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
-
+  const btn = document.getElementById("qryCntBtn-" + qryKeyPhrase);
+  const originalIcon = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+  
   // 从KV中查询
   fetch(apiSrv, {
     method: 'POST',
@@ -275,18 +277,25 @@ function queryVisitCount(qryKeyPhrase) {
     res = myJson;
 
     if (res.status == "200") {
-      document.getElementById("qryCntBtn-" + qryKeyPhrase).innerHTML = res.url;
-    } else {
-      document.getElementById("result").innerHTML = res.error;
-      // 弹出消息窗口
-      const modal = new bootstrap.Modal(document.getElementById('resultModal'));
-      modal.show();
-    }
-
-  }).catch(function (err) {
-    alert("Unknow error. Please retry!");
-    console.log(err);
+      // 成功：显示统计次数
+      btn.innerHTML = res.url;
+    } else {
+      // 失败：显示错误信息，并恢复按钮图标
+      document.getElementById("result").innerHTML = res.error;
+      btn.innerHTML = originalIcon; // 恢复图标
+      const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+      modal.show();
+    }
+    // 无论成功或失败，都重新启用按钮
+    btn.disabled = false;
   })
+  .catch(function (err) {
+    // 请求失败时恢复按钮状态
+    alert("Unknow error. Please retry!");
+    console.log(err);
+    btn.innerHTML = originalIcon; // 恢复图标
+    btn.disabled = false; // 启用按钮
+  });
 }
 
 function query1KV(event) {
