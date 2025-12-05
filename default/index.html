@@ -201,7 +201,6 @@
     }
     .qrcode-container-wrapper {
         padding: 0;
-        margin-top: 0.75rem;
         text-align: center;
         overflow: hidden;
         max-height: 220px;
@@ -211,7 +210,7 @@
         display: inline-block; /* 保持居中 */
         padding: 10px;
         background: var(--qrcode-bg);
-        border-radius: 8px;
+        /* border-radius: 8px 8px 0 0; */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
     }
@@ -390,13 +389,13 @@
               </div>
               <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between mb-4">
-                  <button class="btn btn-success btn-sm" type="button" id="loadListBtn" onclick="loadUrlList()">
+                  <button class="btn btn-success btn-sm rounded-3" type="button" id="loadListBtn" onclick="loadUrlList()">
                     <i class="fas fa-sync-alt me-2"></i>刷新列表
                   </button>
-                  <button class="btn btn-danger btn-sm" type="button" id="clearlocalStgBtn" onclick="clearLocalStorage(); loadUrlList()">
+                  <button class="btn btn-danger btn-sm rounded-3" type="button" id="clearlocalStgBtn" onclick="clearLocalStorage(); loadUrlList()">
                     <i class="fas fa-trash-alt me-2"></i>清空本地
                   </button>
-                  <button class="btn btn-info btn-sm" type="button" id="loadKV2localStgBtn" onclick="loadKV()">
+                  <button class="btn btn-info btn-sm rounded-3" type="button" id="loadKV2localStgBtn" onclick="loadKV()">
                     <i class="fas fa-cloud-download-alt me-2"></i>从KV加载
                   </button>
                 </div>
