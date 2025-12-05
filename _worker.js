@@ -300,7 +300,7 @@ async function handleRequest(request, env) {
     if (path == password_value) {
         let index = await fetch(index_html)
         index = await index.text()
-        index = index.replace(/{__PASSWORD__}/gm, password_value)
+        index = index.replace(/__PASSWORD__/gm, password_value)
         return new Response(index, {
           headers: response_header,
         })
