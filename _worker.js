@@ -309,16 +309,9 @@ async function handleRequest(request, env) {
     // 在KV中查询 短链接 对应的原链接
     let value = await env.LINKS.get(path); 
     // 如果path是'password', 让查询结果为空
-    if (protect_keylist.includes(path)) {
-        value = ""
-    }
-    // KV中没有数据, 返回404
-    if (!value) {
-        return new Response(html404, {
-          headers: response_header,
-          status: 404
-        })
-    }
+    if (protect_keylist.includes(path)) { value = "" }
+    // 如果KV中没有数据, 返回404
+    if (!value) { return new Response(html404, { headers: response_header, status: 404 }) }
 
     // 计数功能
     if (config.visit_count) {
@@ -331,15 +324,10 @@ async function handleRequest(request, env) {
         }
     }
 
-    // 如果阅后即焚模式
-    if (config.snapchat_mode) {
-        await env.LINKS.delete(path) 
-    }
-
+    // 阅后即焚模式
+    if (config.snapchat_mode) { await env.LINKS.delete(path) }
     // 带上参数部分, 拼装要跳转的最终网址
-    if (params) {
-        value = value + params
-    }
+    if (params) { value = value + params }
 
     // 如果启用了结果页面
     if (config.result_page) {
