@@ -401,11 +401,11 @@ document.addEventListener('DOMContentLoaded', function () {
           if (data.custom_link) {
             // 功能开启：启用输入框，显示默认 placeholder
             customKeyInput.disabled = false;
-            customKeyInput.placeholder = customKeyInput.getAttribute('placeholder') || "输入自定义路径（字母、数字）";
+            customKeyInput.placeholder = customKeyInput.getAttribute('placeholder') || "输入大小写字母和数字";
           } else {
             // 功能关闭：禁用输入框，修改 placeholder
             customKeyInput.disabled = true;
-            customKeyInput.placeholder = "自定义短链功能未开启";
+            customKeyInput.placeholder = "功能未开启，随机生成短链Key";
             customKeyInput.value = ""; // 清空可能已有的输入
           }
           // 可以在这里存储其他配置
