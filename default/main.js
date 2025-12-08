@@ -115,7 +115,9 @@ function loadUrlList() {
   let longUrl = document.querySelector("#longURL").value.trim()
   let keys = [];
   for (let i = 0; i < localStorage.length; i++) {
-    keys.push(localStorage.key(i));
+    const key = localStorage.key(i);
+    if (key === 'theme') { continue; } // 跳过主题设置项
+    keys.push(key);
   }
 
   keys.reverse().forEach(keyShortURL => {
