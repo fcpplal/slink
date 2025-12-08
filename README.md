@@ -51,7 +51,9 @@
 - 访问计数以 `key-count -> countValue` 形式存储。
 - 唯一链接功能通过存储 `SHA512(longURL) -> randomKey` 来实现反向查找。
 
-## 三. 部署教程
+---
+
+## 部署教程
 
 1. **创建 Worker**
    - 进入 CF 的 Workers 和 Pages 页面，创建一个 worker，名称随意填
@@ -81,14 +83,18 @@
 4. **访问项目管理页面**
 	访问 `https://your-worker.your-account.workers.dev/<PASSWORD>` 使用管理界面
 
-## 四. 注意事项
+--C
+
+## 注意事项
 
 1. **密码安全**：确保设置强密码并定期更换
 2. **KV 限制**：Cloudflare KV 有写入次数限制，频繁操作可能导致超额
 3. **自定义域名**：如需使用自定义域名，需在 Cloudflare 中配置 DNS 和 Workers 路由
 4. **备份**：定期导出 KV 数据作为备份
 
-## 五. API 调用
+---
+
+## API 调用
 
 | 命令 | 方法 | 参数 | 描述 |
 |------|------|------|------|
