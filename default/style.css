@@ -210,14 +210,17 @@ body {
 .list-group-item .text-primary { cursor: pointer; transition: color 0.2s; }
 .list-group-item .text-primary:hover { color: var(--accent-color); }
 /* 仅为两端元素设置顶部的圆角，以匹配列表项的圆角 */
-.list-group-item .input-group:first-child { border-bottom-left-radius: 0 !important; }
-.list-group-item .input-group:last-child { border-bottom-right-radius: 0 !important; }
-.list-group-item .form-control { border-top-left-radius: 0 !important; border-top-right-radius: 0 !important; }
+.list-group-item .input-group .form-control,
+.list-group-item .input-group .btn { border-radius: 0 !important; }
+.list-group-item .input-group .form-control:first-child { border-top-left-radius: 8px !important; }
+.list-group-item .input-group .btn:last-child { border-top-right-radius: 8px !important; }
+.list-group-item > .form-control:last-child { border-radius: 0 0 8px 8px !important; }
 
 .qrcode-container {
   display: block;
   background: var(--qrcode-bg);
   border: 1px solid var(--border-color);
+  border-width: 0;
   text-align: center;
   max-height: 0;
   opacity: 0;
@@ -226,7 +229,7 @@ body {
   margin: 0 auto;
   transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
-.qrcode-container.qrcode-visible { max-height: 150px; opacity: 1; padding: 10px; }
+.qrcode-container.qrcode-visible { max-height: 150px; opacity: 1; padding: 10px; border-width: 1px; }
 .qrcode-container canvas { width: auto; height: auto; max-width: 128px; }
 
 /* 模态框 */
@@ -283,6 +286,7 @@ body.dark-mode .form-label,
 body.dark-mode .copyright, 
 body.dark-mode .footer-link { color: var(--primary-color); }
 body.dark-mode .form-control::placeholder { color: var(--text-secondary); }
+body.dark-mode .theme-toggle-btn { color: var(--text-secondary); }
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
