@@ -102,7 +102,6 @@ async function handleRequest(request, env) {
     // 读取环境变量
     const config = {
         password: env.PASSWORD || "link",                           // 管理面板路径，默认：/link
-        result_page: env.RESULT_PAGE === "true" ? true : false,     // 跳转页面，默认：关闭
         theme: env.THEME || "default",                              // 主题，可选：theme/urlcool
         cors: env.CORS === "false" ? false : true,                  // 跨域，默认：开启
         unique_link: env.UNIQUE_LINK === "false" ? false : true,    // 唯一链接，默认：开启
@@ -116,7 +115,6 @@ async function handleRequest(request, env) {
 
     // 根据 config 定义 HTML 模板路径
     const index_html = "https://blog2.811520.xyz/slink/" + config.theme + "/index.html";
-    const result_html = "https://blog2.811520.xyz/slink/" + config.theme + "/result.html";
     
     // 定义响应头
     let response_header = {
@@ -152,7 +150,6 @@ async function handleRequest(request, env) {
             return new Response(JSON.stringify({
                 status: 200,
                 visit_count: config.visit_count,
-                result_page: config.result_page,
                 custom_link: config.custom_link
             }), {
                 headers: response_header,
@@ -348,16 +345,6 @@ async function handleRequest(request, env) {
     if (config.snapchat_mode) { await env.LINKS.delete(path) }
     // 带上参数部分, 拼装要跳转的最终网址
     if (params) { value = value + params }
-
-    // 如果启用了结果页面
-    if (config.result_page) {
-        let result_page_html = await fetch(result_html)
-        let result_page_html_text = await result_page_html.text()
-        result_page_html_text = result_page_html_text.replace(/{__FINAL_LINK__}/gm, value)
-        return new Response(result_page_html_text, {
-          headers: response_header,
-        })
-    }
 
     // 根据系统类型返回不同响应
     if (config.system_type == "shorturl") {

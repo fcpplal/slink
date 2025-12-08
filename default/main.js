@@ -443,7 +443,6 @@ document.addEventListener('DOMContentLoaded', function () {
           window.visit_count_enabled = data.visit_count;
           window.enable_qrcode = data.enable_qrcode;
           window.allow_custom_key = data.custom_link;
-          window.result_page_enabled = data.result_page;
 
           const customKeyInput = document.getElementById('keyPhrase');
           if (data.custom_link) {
