@@ -101,7 +101,7 @@
 
 | 命令 | 方法 | 参数 | 描述 |
 |------|------|------|------|
-| add  | POST | url, password, [key] | 创建短链接 |
+| add  | POST | url, password, key | 创建短链接 |
 | del  | POST | key, password | 删除短链接 |
 | qry  | POST | key, password | 查询短链接 |
 | qrycnt  | POST | key, password | 查询访问计数 |
