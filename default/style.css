@@ -23,7 +23,7 @@
 }
 
 .form-label { color: var(--text-primary); }
-.text-muted, .form-control::placeholder { color: var(--text-secondary); }
+.text-muted, .form-control::placeholder { color: var(--text-secondary) !important; }
 .footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
 .footer-link:hover { color: var(--accent-color); }
 .copyright { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--text-secondary); gap: 8px; font-size: 14px; }
@@ -75,12 +75,12 @@ body {
   padding: 10px;
   font-size: 16px;
   transition: all 0.2s;
-  background-color: var(--input-bg);
-  color: var(--text-secondary);
+  background-color: var(--input-bg) !important;
+  color: var(--text-secondary) !important;
   border-color: var(--border-color);
   cursor: auto;
 }
-.form-control:focus { border-color: var(--primary-color); }
+.form-control:focus { border-color: var(--primary-color) !important; }
 
 .btn {
   padding: 6px 10px;
