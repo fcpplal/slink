@@ -6,6 +6,8 @@
 
 **slink** 是一个轻量级、高性能的短链接服务，它利用 **Cloudflare Workers** 的全球分布式网络和 **KV 存储** 的键值数据库，提供了免费且快速的短链接生成和重定向服务。该项目旨在提供一个易于部署、功能完善的自托管短链接解决方案。
 
+<img width="1885" height="859" alt="image" src="https://github.com/user-attachments/assets/436f3b9c-7b0a-4591-9574-e187721b7d93" />
+
 ## 🚀 核心功能与技术栈
 
 ### 核心技术
