@@ -41,8 +41,9 @@
   }
   .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
   .list-group-item:hover { background: rgba(78, 115, 223, 0.1); }
-  .form-label { color: var(--primary-color); }
-  .copyright, .footer-link, .text-muted, .form-control::placeholder { color: var(--text-secondary); }
+  .form-label { color: var(--text-primary); }
+  .text-muted, .form-control::placeholder { color: var(--text-secondary); }
+  .copyright, .footer-link { color: var(--text-secondary); }
   .footer-link:hover { color: var(--accent-color); }
 }
 
@@ -66,6 +67,8 @@ body {
   padding: 0 15px;
 }
 
+.form-label { color: var(--text-primary); }
+.text-muted, .form-control::placeholder { color: var(--text-secondary); }
 .footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
 .footer-link:hover { color: var(--accent-color); }
 .copyright { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--text-secondary); gap: 8px; font-size: 14px; }
@@ -172,8 +175,6 @@ body {
 #urlList::-webkit-scrollbar-track { background: var(--scrollbar-track); }  
 #urlList::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 4px; }
 
-.text-muted { color: var(--text-secondary); }
-
 .list-group-item {
   padding: 16px;
   margin-bottom: 16px;
@@ -254,11 +255,6 @@ body.light-mode {
   --card-footer-border: rgba(0, 0, 0, 0.05);
   --qrcode-bg: white;
 }
-body.light-mode .form-label { color: var(--text-primary); }
-/*body.light-mode .text-muted,
-body.light-mode .copyright,
-body.light-mode .theme-toggle-btn,
-body.light-mode .form-control::placeholder { color: var(--text-secondary); }*/
 
 /* 手动切换暗黑模式 (Dark Mode) */
 body.dark-mode {
@@ -276,10 +272,6 @@ body.dark-mode {
   --card-footer-bg: rgba(0, 0, 0, 0.1);
   --qrcode-bg: rgba(103, 119, 148, 0.8);
 }
-body.dark-mode .form-label { color: var(--primary-color); }
-/*body.dark-mode .copyright,
-body.dark-mode .theme-toggle-btn,
-body.dark-mode .form-control::placeholder { color: var(--text-secondary); }*/
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
