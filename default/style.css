@@ -23,7 +23,8 @@
 }
 
 .form-label { color: var(--text-primary); }
-.text-muted, .form-control::placeholder { color: var(--text-secondary); }
+.form-control::placeholder { color: var(--text-secondary); }
+.text-muted { color: var(--text-secondary); } 
 .footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
 .footer-link:hover { color: var(--accent-color); }
 .copyright { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--text-secondary); gap: 8px; font-size: 14px; }
@@ -254,7 +255,8 @@ body.light-mode {
 }
 body.light-mode .form-control, body.light-mode .input-group-text { background-color: var(--input-bg); color: var(--text-secondary); }
 body.light-mode .form-control:focus { border-color: var(--primary-color); }
-body.light-mode .text-muted, body.light-mode .form-control::placeholder { color: var(--text-secondary); }
+body.light-mode .text-muted { color: var(--text-secondary); }
+body.light-mode .form-control::placeholder { color: var(--text-secondary); }
 
 /* 手动切换暗黑模式 (Dark Mode) */
 body.dark-mode {
@@ -274,7 +276,8 @@ body.dark-mode {
 }
 body.dark-mode .form-control, body.dark-mode .input-group-text { background-color: var(--input-bg); color: var(--text-secondary); }
 body.dark-mode .form-control:focus { border-color: var(--primary-color); }
-body.dark-mode .text-muted, body.dark-mode .form-control::placeholder { color: var(--text-secondary); }
+body.dark-mode .text-muted { color: var(--text-secondary); }
+body.dark-mode .form-control::placeholder { color: var(--text-secondary); }
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
