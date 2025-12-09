@@ -8,7 +8,6 @@ function copyShortUrl(text, btnId) {
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById(btnId);
     if (!btn) return;
-    // 显示成功状态
     const originalIcon = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check" style="color:white"></i>'; // 复制后显示白色的 √
     setTimeout(() => { btn.innerHTML = originalIcon; }, 2000);
