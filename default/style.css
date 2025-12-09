@@ -22,7 +22,7 @@
   --qrcode-bg: white;
 }
 
-/* 跟随系统主题-深色模式 */
+/* 跟随系统主题-暗黑模式 */
 @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #90caf9;
@@ -41,8 +41,9 @@
   }
   .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
   .list-group-item:hover { background: rgba(78, 115, 223, 0.1); }
-  .form-label, .copyright, .footer-link { color: var(--primary-color) !important; }
-  .form-control::placeholder { color: var(--text-secondary); }
+  .form-label { color: var(--primary-color); }
+  .copyright, .footer-link, .text-muted, .form-control::placeholder { color: var(--text-secondary); }
+  .footer-link:hover { color: var(--accent-color); }
 }
 
 /* 页面和排版 */
@@ -254,11 +255,10 @@ body.light-mode {
   --qrcode-bg: white;
 }
 body.light-mode .form-label { color: var(--text-primary); }
-/*body.light-mode .footer-link:hover { color: var(--accent-color); }*/
-body.light-mode .text-muted,
+/*body.light-mode .text-muted,
 body.light-mode .copyright,
 body.light-mode .theme-toggle-btn,
-body.light-mode .form-control::placeholder { color: var(--text-secondary); }
+body.light-mode .form-control::placeholder { color: var(--text-secondary); }*/
 
 /* 手动切换暗黑模式 (Dark Mode) */
 body.dark-mode {
@@ -277,11 +277,9 @@ body.dark-mode {
   --qrcode-bg: rgba(103, 119, 148, 0.8);
 }
 body.dark-mode .form-label { color: var(--primary-color); }
-body.dark-mode .text-muted { color: var(--text-secondary) !important; }
-/*body.dark-mode .footer-link:hover { color: var(--accent-color); }*/
-body.dark-mode .copyright,
+/*body.dark-mode .copyright,
 body.dark-mode .theme-toggle-btn,
-body.dark-mode .form-control::placeholder { color: var(--text-secondary); }
+body.dark-mode .form-control::placeholder { color: var(--text-secondary); }*/
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
