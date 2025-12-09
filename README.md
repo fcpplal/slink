@@ -74,21 +74,20 @@
 
 | **环境变量**        | **默认值**    | **描述**                                        |
 | --------------- | ---------- | --------------------------------------------- |
-| `PASSWORD`      | `link`     | **管理面板的访问路径/密码**。用户需访问 `yourdomain.com/link`。 |
-| `THEME`         | `default`  | 界面主题，可扩展不同功能。目前支持图床：`theme/imghost`，需同步设置 `TYPE` 变量 |
-| `CORS`          | `true`     | 是否开启跨域访问 (CORS)。                              |
-| `UNIQUE_LINK`   | `true`     | 是否开启唯一链接功能（相同 URL 只生成一个短链）。                   |
-| `CUSTOM_LINK`   | `true`     | 是否允许用户自定义短链 Key。                              |
-| `OVERWRITE_KV`  | `true`     | 是否允许覆盖已存在的自定义短链 Key。                          |
-| `SNAPCHAT_MODE` | `false`    | 是否启用阅后即焚模式（访问一次后删除）。                          |
-| `VISIT_COUNT`   | `true`     | 是否启用访问计数功能。                                   |
-| `LOAD_KV`       | `true`     | 是否允许从 KV 批量加载数据到本地列表。                         |
-| `TYPE`          | `shorturl` | 访问模式。`shorturl` 为短链接；`imghost` 为图床模式。         |
+| `PASSWORD`      | `link`     | **管理面板的访问路径/密码**。用户需访问 `yourdomain.com/link` |
+| `THEME`         | `default`  | 界面主题，可扩展不同功能。目前支持图床：`imghost`，需同步设置 `TYPE` 变量 |
+| `CORS`          | `true`     | 是否开启跨域访问 (CORS)                              |
+| `UNIQUE_LINK`   | `true`     | 是否开启唯一链接功能（相同 URL 只生成一个短链）                  |
+| `CUSTOM_LINK`   | `true`     | 是否允许用户自定义短链 Key                             |
+| `OVERWRITE_KV`  | `true`     | 是否允许覆盖已存在的自定义短链 Key                         |
+| `SNAPCHAT_MODE` | `false`    | 是否启用阅后即焚模式（访问一次后删除）                         |
+| `VISIT_COUNT`   | `true`     | 是否启用访问计数功能                                |
+| `LOAD_KV`       | `true`     | 是否允许从 KV 批量加载数据到本地列表                         |
+| `TYPE`          | `shorturl` | 访问模式。`shorturl` 为短链接；`imghost` 为图床模式        |
 
 4. **访问项目管理页面**
-	访问 `https://your-worker.your-account.workers.dev/<PASSWORD>` 使用管理界面
 
---C
+访问 `https://your-worker.your-account.workers.dev/<PASSWORD>` 使用管理界面
 
 ## 注意事项
 
