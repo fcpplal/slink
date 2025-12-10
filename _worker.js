@@ -110,7 +110,7 @@ async function handleRequest(request, env) {
         snapchat_mode: env.SNAPCHAT_MODE === "true" ? true : false, // 阅后即焚模式，默认：关闭
         visit_count: env.VISIT_COUNT === "false" ? false : true,    // 访问计数，默认：开启
         load_kv: env.LOAD_KV === "false" ? false : true,            // KV存储，需要绑定KV变量 LINKS，默认：开启
-        system_type: env.TYPE || "shorturl",                        // 访问模式，默认为短链, 可选 imghost（图床）
+        system_type: env.TYPE || "link",                        // 访问模式，默认为link（短链）, 可选img（图床）
     };
 
     // 根据 config 定义 HTML 模板路径
@@ -157,7 +157,7 @@ async function handleRequest(request, env) {
         }
 
         if (req_cmd == "add") {
-            if ((config.system_type == "shorturl") && !await checkURL(req_url)) {
+            if ((config.system_type == "link") && !await checkURL(req_url)) {
                 return new Response(`{"status":500, "url": "` + req_url + `", "error":"错误: 无效的URL"}`, {
                     headers: response_header,
                 })
@@ -347,9 +347,9 @@ async function handleRequest(request, env) {
     if (params) { value = value + params }
 
     // 根据系统类型返回不同响应
-    if (config.system_type == "shorturl") {
+    if (config.system_type == "link") {
         return Response.redirect(value, 302);
-    } else if (config.system_type == "imghost") {
+    } else if (config.system_type == "img") {
         try {
           const blob = base64ToBlob(value);
           let contentType = "image/jpeg";
