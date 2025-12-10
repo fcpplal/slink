@@ -8,8 +8,8 @@
   <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f517.svg" type="image/svg+xml">
   <title>图床管理器</title>
   <!-- <link rel="stylesheet" href="../link/style.css"> -->
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink@main/link/style.css"> -->
   <link rel="stylesheet" href="https://blog2.811520.xyz/slink/link/style.css">
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink@main/link/style.css"> -->
   <style>
   .file-selector-group, #img_preview_container { position: relative; }
   .file-selector-group .file-input-overlay { position: absolute; top: 0; left: 35px; height: 100%; width: calc(100% - 105px); opacity: 0; cursor: pointer; z-index: 5; }
@@ -69,18 +69,18 @@
               <textarea class="form-control" id="longURL" rows="2"
                 placeholder="此处自动生成Base64编码" onpaste="setTimeout(base64ToImage, 1)">
               </textarea>
+              <button class="btn btn-outline-primary" type="button" id="syncBtn" onclick="syncKeyValue()">
+                <i class="fas fa-sync me-2"></i>获取原文件名
+              </button>
             </div>
           </div>
 
           <div class="mb-3" id="customLinkContainer">
-            <label for="keyPhrase" class="form-label fw-bold">定义文件名（可选）</label>
+            <label for="keyPhrase" class="form-label fw-bold">自定义文件名（可选）</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-file-signature"></i></span>
               <input type="text" class="form-control" id="keyPhrase" placeholder="示例: 123.jpg"
                 onkeypress="if(event.keyCode === 13) shorturl()">
-              <button class="btn btn-outline-primary" type="button" id="syncBtn" onclick="syncKeyValue()">
-                <i class="fas fa-sync me-2"></i>获取
-              </button>
               <button class="btn btn-outline-primary" type="button" id="addBtn" onclick="shorturl()">
                 <i class="fas fa-magic me-2"></i>生成
               </button>
