@@ -1,108 +1,169 @@
 <!doctype html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="txt/html; charset=utf-8" />
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f517.svg" type="image/svg+xml">
-  <title>Image Hosting</title>
-  <!-- <link rel="stylesheet" href="./style.css"> -->
-  <link rel="stylesheet" href="https://blog2.811520.xyz/slink/imghost/style.css">
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink/imghost/styles.css"> -->
+  <title>图床管理器</title>
+  <!-- <link rel="stylesheet" href="../default/style.css"> -->
+  <link rel="stylesheet" href="https://blog2.811520.xyz/slink/default/style.css">
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink@main/default/style.css"> -->
+  <style>
+  .file-selector-group, #img_preview_container { position: relative; }
+  .file-selector-group .file-input-overlay { position: absolute; top: 0; left: 35px; height: 100%; width: calc(100% - 105px); opacity: 0; cursor: pointer; z-index: 5; }
+  .file-selector-group .input-group-text, .file-selector-group button { z-index: 10; }
+  .preview-container { position: relative; display: none; }
+  #img_input { max-width: 100%; max-height: 1024px; }
+  #clearImgBtn { position: absolute; top: 10px; right: 10px; display: none; }
+  </style>
 </head>
+
 <body>
-  <div class="d-flex align-items-start flex-wrap">
-    <div class="card shadow m-3">
-      <h5 class="card-header">图片转为base64编码</h5>
-      <div class="card-body">
-        <h5 class="card-title"></h5>
-        <div class="mb-3">
-          <label for="input_file" class="form-label">选择文件</label>
-          <input class="form-control" type="file" id="input_file" onchange="onFileChange(this)">
-        </div>
-        
-        <div class="mb-3">
-          <img id="img_input" src="" style="max-width: 100%; max-height: 1024px;">
-        </div>
-        
-        <div class="form-floating mb-3">
-          <textarea class="form-control" placeholder="" id="area_base64" onpaste="setTimeout(base64ToImage, 1)"></textarea>
-          <label for="area_base64">Base64编码</label>
-        </div>
-        
-        <div>
-          <button class="btn btn-info" type="button" onclick='syncKeyValue()'>Next</button>
-        </div>
-      </div>
+  <button class="btn btn-sm theme-toggle-btn" id="themeToggleBtn" title="切换主题">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <div class="container">
+    <div class="text-center mb-4">
+      <h1 class="display-5 fw-bold mb-3">
+        <i class="fas fa-images me-2"></i>图床管理器
+      </h1>
+      <p class="lead fw-medium">基于 CF Worker 和 KV 创建的免费图床服务</p>
     </div>
-    
-    <div class="card shadow m-3">
-      <h5 class="card-header">短链系统变身图床</h5>
-      <div class="card-body">
-        <h5 class="card-title"> </h5>
-        <div class="input-group mb-3">
-          <div class="form-floating mb-3">
-            <textarea class="form-control" placeholder="" id="longURL" oninput="loadUrlList()"></textarea>
-            <label for="longURL">Base64编码</label>
-          </div>
-        </div>
-        
-        <div class="input-group mb-3">
-          <span class="input-group-text" id="basic-addon2">文件名</span>
-          <input type="text" class="form-control" id="keyPhrase" aria-describedby="basic-addon2" placeholder="">
-        </div>
-        
-        <div class="input-group mb-3">
-          <button class="btn btn-primary" type="button" onclick='shorturl()' id="addBtn">保存</button>
-        </div>
-        
-        <div class="input-group mb-3">
-          <span class="input-group-text" id="basic-addon3">本系统密码</span>
-          <input class="form-control" type="text" value="__PASSWORD__" readonly="true" id="passwordText" aria-describedby="basic-addon3">
-        </div>
-      </div>
-      
-      <div class="card-footer">
-        <span> <a href="https://github.com/yutian81/slink" target="_self">Github</a> </span>
-      </div>
-    </div>
-    
-    <div class="card shadow m-3">
-      <div class="card-header"><i class="fas fa-list me-2"></i>链接管理</div>
-      <div class="card-body d-flex flex-column">
-        <div class="d-flex justify-content-between mb-3">
-          <button class="btn btn-success btn-sm" type="button" id="loadListBtn" onclick="loadUrlList()">
-            <i class="fas fa-sync-alt me-2"></i>刷新列表
-          </button>
-          <button class="btn btn-danger btn-sm" type="button" id="clearlocalStgBtn" onclick="clearLocalStorage(); loadUrlList()">
-            <i class="fas fa-trash-alt me-2"></i>清空本地
-          </button>
-          <button class="btn btn-primary btn-sm" type="button" id="loadKV2localStgBtn" onclick="loadKV()">
-            <i class="fas fa-cloud-download-alt me-2"></i>从KV加载
-          </button>
-        </div>
-        
-        <div class="card-text flex-grow-1">
-          <div class="list-group" id="urlList"></div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="resultModalLabel">结果</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
+
+    <div class="cards-container">
+      <div class="card shadow">
+        <div class="card-header"><i class="fas fa-plus-circle me-2"></i>生成图片Base64编码</div>
+        <div class="card-body">
           
-          <div class="modal-body" id="result">暂无结果</div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" onclick='copyurl("result")' data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Copied!">复制</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <div class="mb-3">
+            <label for="input_file" class="form-label fw-bold">选择图片</label>
+            <div class="input-group file-selector-group">
+              <span class="input-group-text"><i class="fas fa-folder-open"></i></span>
+              <input type="text" class="form-control" id="file_display"
+                placeholder="支持拖拽或粘贴图片" readonly>
+              <input class="form-control file-input-overlay" type="file" id="input_file"
+                onchange="onFileChange(this)">
+              <button class="btn btn-outline-primary" type="button" onclick="document.getElementById('input_file').click()">
+                <i class="fas fa-cloud me-1"></i>选择
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3 preview-container">
+            <label for="img_input" class="form-label fw-bold">预览图片</label>
+            <div id="img_preview_container">
+              <img id="img_input" src="">
+              <button id="clearImgBtn" class="btn btn-sm btn-danger" type="button"
+                onclick="clearImage()" title="清除"><i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="area_base64" class="form-label fw-bold">Base64编码图片</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-exchange-alt"></i></span>
+              <textarea class="form-control" id="area_base64" rows="2"
+                placeholder="此处自动生成Base64编码" onpaste="setTimeout(base64ToImage, 1)">
+              </textarea>
+            </div>
+          </div>
+
+          <div class="mb-3" id="customLinkContainer">
+            <label for="keyPhrase" class="form-label fw-bold">定义文件名（可选）</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-file-signature"></i></span>
+              <input type="text" class="form-control" id="keyPhrase" placeholder="示例: 123.jpg"
+                onkeypress="if(event.keyCode === 13) shorturl()">
+              <button class="btn btn-outline-primary" type="button" id="syncBtn" onclick="syncKeyValue()">
+                <i class="fas fa-sync me-2"></i>获取
+              </button>
+              <button class="btn btn-outline-primary" type="button" id="addBtn" onclick="shorturl()">
+                <i class="fas fa-magic me-2"></i>生成
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">查询图片链接</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <input type="text" class="form-control" id="keyForQuery" placeholder="输入图片名查询链接"
+                onkeypress="if(event.keyCode === 13) query1KV()">
+              <button class="btn btn-outline-primary" type="button" onclick="query1KV()">
+                <i class="fas fa-external-link-alt me-2"></i>查询
+              </button>
+            </div>
+          </div>
+          <input type="hidden" id="passwordText" value="__PASSWORD__">
+        </div>
+      </div>
+
+      <div class="card shadow">
+        <div class="card-header"><i class="fas fa-list me-2"></i>链接管理</div>
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-success btn-sm" type="button" id="loadListBtn" onclick="loadUrlList()">
+              <i class="fas fa-sync-alt me-2"></i>刷新列表
+            </button>
+            <button class="btn btn-danger btn-sm" type="button" id="clearlocalStgBtn" onclick="clearLocalStorage(); loadUrlList()">
+              <i class="fas fa-trash-alt me-2"></i>清空本地
+            </button>
+            <button class="btn btn-primary btn-sm" type="button" id="loadKV2localStgBtn" onclick="loadKV()">
+              <i class="fas fa-cloud-download-alt me-2"></i>从KV加载
+            </button>
+          </div>
+
+          <div class="card-text flex-grow-1">
+            <div class="list-group" id="urlList">
+            </div>
           </div>
         </div>
+
+        <div class="card-footer text-center">
+          <p class="mb-0 copyright">
+            <span class="item">Copyright © 2025 Yutian81</span>
+            <span class="separator">|</span>
+            <a href="https://github.com/yutian81/slink/" class="item footer-link" target="_blank">
+              <i class="fab fa-github me-1"></i>Github
+            </a>
+            <span class="separator">|</span>
+            <a href="https://blog.notett.com" class="item footer-link" target="_blank">
+              <i class="fas fa-blog me-1"></i>QingYun Blog
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="resultModalLabel">
+            <i class="fas fa-check-circle me-2"></i>生成结果
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="关闭"></button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="alert alert-info" id="result">暂无结果</div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="copyResultBtn">
+            <i class="fas fa-copy me-2"></i>复制
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>关闭
+          </button>
+        </div>
+      
       </div>
     </div>
   </div>
@@ -111,6 +172,7 @@
     // 感谢 https://oktools.net/image2base64
     let img_input = document.getElementById('img_input');
     let area_base64 = document.getElementById('area_base64');
+    let longURL = document.getElementById('area_base64');
     
     function base64ToImage() {
       let base64 = area_base64.value;
@@ -122,23 +184,42 @@
 
     function onFileChange(e) {
       loadImage(e.files[0]);
+      let displayInput = document.getElementById('file_display'); // 将文件名显示在文本框中
+      if (e.files.length > 0) {
+        displayInput.value = e.files[0].name;
+      } else {
+        displayInput.value = '';
+      }
     }
 
     function syncKeyValue() {
       // 文件名中的空格、# 字符转换为"-"连字符
       document.getElementById('keyPhrase').value = document.getElementById('input_file').files[0].name.replace(/\s/g, "-").replace(/#/g, "-");
-      document.getElementById('longURL').value = document.getElementById('area_base64').value;
-      document.getElementById("longURL").dispatchEvent(new Event('input', {
-        bubbles: true,
-        cancelable: true,
-      }))
+      longURL.value = area_base64.value;
+      longURL.dispatchEvent(new Event('input', { bubbles: true, cancelable: true, }));
+    }
+
+    function clearImage() {
+      document.querySelector('.preview-container').style.display = 'none'; // 隐藏整个预览容器
+      document.getElementById('img_input').src = '';
+      document.getElementById('img_input').style.display = 'none';
+      document.getElementById('clearImgBtn').style.display = 'none'; // 清除图片预览
+      document.getElementById('area_base64').value = ''; // 清除Base64编码
+      document.getElementById('keyPhrase').value = ''; // 清除文件名输入
+      document.getElementById('file_display').value = ''; // 清除文件显示文本
+      document.getElementById('input_file').value = ''; // 重置文件选择框
     }
 
     function loadImage(file) {
+      if (!file) return; // 防止文件为空
+      let previewContainer = document.querySelector('.preview-container');
       let reader = new FileReader();
       reader.onload = function (e) {
-        img_input.src = e.target.result;
-        area_base64.value = e.target.result;
+          previewContainer.style.display = 'block'; // 显示预览容器
+          img_input.src = e.target.result; // 设置图片源
+          img_input.style.display = 'block'; // 显示图片
+          area_base64.value = e.target.result; // 设置base64值
+          document.getElementById('clearImgBtn').style.display = 'block'; // 显示关闭按钮
       };
       reader.readAsDataURL(file);
     }
@@ -166,15 +247,14 @@
   <script src="https://blog2.811520.xyz/slink/default/main.js" crossorigin="anonymous"></script>
   <!-- <script src="https://cdn.jsdelivr.net/gh/yutian81/slink/default/main.js" crossorigin="anonymous"></script> -->
   
-  <script>    
+  <script>
     function buildValueImg(longUrl) {
       let valueImg = document.createElement('img')
       valueImg.classList.add("img-thumbnail")
       valueImg.src = longUrl
       return valueImg
     }
-    // 函数的定义在 main.js 中
-    buildValueItemFunc = buildValueImg    
+    buildValueItemFunc = buildValueImg // 函数的定义在 main.js 中
   </script>
 </body>
 </html>
