@@ -49,8 +49,10 @@
 
 1. **创建 Worker**
    - 进入 CF 的 Workers 和 Pages 页面，创建一个 worker，名称随意填
-   - 复制 [GitHub 仓库](https://github.com/yutian81/slink/) 中的 `_worker.js` 内容
+   - 复制 [GitHub 仓库](https://github.com/yutian81/slink/) 中的 `_worker-all.js` 内容
    - 粘贴到 Worker 编辑器中，点击"保存并部署"
+
+> `_worker-all.js` 是聚合系统，含四大模块，`_worker.js` 是单系统，部署时可通过 `TYPE` 变量 (当前支持 `link`短链和 `img`图床) 决定启用哪个系统
 
 2. **配置 KV 空间**
    - 创建一个新的 KV 命名空间（如"LINKS"）
