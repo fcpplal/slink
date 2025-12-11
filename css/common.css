@@ -34,7 +34,10 @@ body {
 }
 
 /* 页脚 */
-.card-footer { padding: 16px 20px; }
+.card-footer { padding: 16px 20px;
+    background-color: transparent;
+    border: none;
+}
 .copyright {
     display: flex;
     flex-wrap: wrap;
@@ -43,13 +46,8 @@ body {
     color: var(--text-secondary);
     gap: 8px; font-size: 14px;
 }
-.footer-link {
-    color: var(--text-secondary);
-    text-decoration: none; transition: all 0.2s;
-}
-.footer-link:hover {
-    color: var(--accent-color);
-}
+.footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
+.footer-link:hover { color: var(--accent-color); }
 
 /* 模态框 */
 .modal-content { border: none; border-radius: 8px; }
@@ -84,4 +82,3 @@ body.dark-mode .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0
     transition: all 0.2s;
 }
 .theme-toggle-btn:hover { background-color: rgba(0, 0, 0, 0.2); }
-
