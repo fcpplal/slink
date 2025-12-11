@@ -119,7 +119,7 @@ curl -X POST https://<worker_domain>/<password> \
 curl -X POST https://<worker_domain>/<password> \
 -H "Content-Type: application/json" \
 -d '{
-    "cmd": "qryall",
+    "cmd": "qrycnt",
     "key": "randomkey1"
 }'
 ```
