@@ -101,8 +101,7 @@ async function system_password(env, config) {
 async function handleRequest(request, env) {
     // 读取环境变量
     const config = {
-        password: env.PASSWORD || "link",                           // 管理面板路径，默认：/link
-        theme: env.THEME || "link",                                 // 可选：img，变身图床
+        password: env.PASSWORD || "admin",                          // 管理面板路径，默认：/admin
         cors: env.CORS === "false" ? false : true,                  // 跨域，默认：开启
         unique_link: env.UNIQUE_LINK === "false" ? false : true,    // 唯一链接，默认：开启
         custom_link: env.CUSTOM_LINK === "false" ? false : true,    // 自定义短链，默认：开启
@@ -110,11 +109,11 @@ async function handleRequest(request, env) {
         snapchat_mode: env.SNAPCHAT_MODE === "true" ? true : false, // 阅后即焚模式，默认：关闭
         visit_count: env.VISIT_COUNT === "false" ? false : true,    // 访问计数，默认：开启
         load_kv: env.LOAD_KV === "false" ? false : true,            // KV存储，需要绑定KV变量 LINKS，默认：开启
-        system_type: env.TYPE || "link",                        // 访问模式，默认为link（短链）, 可选img（图床）
+        system_type: env.TYPE || "link",                            // 访问模式，默认为link（短链）, 可选img（图床）
     };
 
     // 根据 config 定义 HTML 模板路径
-    const index_html = "https://blog2.811520.xyz/slink/" + config.theme + "/index.html";
+    const index_html = "https://blog2.811520.xyz/slink/" + config.system_type + "/index.html";
     
     // 定义响应头
     let response_header = {
