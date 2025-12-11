@@ -17,8 +17,6 @@
     --input-bg: white;
     --border-color: #ced4da;
     --scrollbar-track: #f1f1f1;
-    --card-footer-bg: rgba(0, 0, 0, 0.03);
-    --card-footer-border: rgba(0, 0, 0, 0.05);
     --qrcode-bg: white;
 }
 
@@ -36,6 +34,7 @@ body {
 }
 
 /* 页脚 */
+.card-footer { padding: 16px 20px; }
 .copyright {
     display: flex;
     flex-wrap: wrap;
@@ -70,7 +69,6 @@ body.dark-mode {
     --input-bg: #4a5568;
     --border-color: #6a7588;
     --scrollbar-track: #2d3748;
-    --card-footer-bg: rgba(0, 0, 0, 0.1);
     --qrcode-bg: rgba(103, 119, 148, 0.8);
 }
 body.dark-mode .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
@@ -86,3 +84,4 @@ body.dark-mode .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0
     transition: all 0.2s;
 }
 .theme-toggle-btn:hover { background-color: rgba(0, 0, 0, 0.2); }
+
