@@ -1,83 +1,48 @@
-## 🚀 短链接服务 API 文档 (Cloudflare Worker)
+## 🚀 Slink API 文档
 
-**基础要求:**
 - **基础路径:** `/`
-- **请求方法:** 所有 API 操作均使用 **POST** 方法。
-- **请求头:** 必须设置 `Content-Type: application/json`。
-- **安全认证:** 所有请求体中都必须包含正确的 `cmd` 和 `password` 字段。
-- **受保护 Key:** `["password", "link", "img", "note", "paste"]` 列表中的 Key 无法被 API 操作（添加、删除、查询）。
+- **API端点:** `/<password>` 或 `/<password<>/<type>`
+– **type 类型:** `link/img/note/paste`
+- **请求方法:** `POST`
+- **请求头:** `Content-Type: application/json`
+- **请求体:** 必须包含正确的 `cmd` 和 `password` 字段
+- **受保护 Key:** `["password", "link", "img", "note", "paste"]` 列表中的 Key 无法被 API 操作（添加、删除、查询）
 
 ---
 
-### 1. 添加/生成短链接 API
-
-用于创建新的短链接。
-
-|**参数 (JSON Body)**|**类型**|**是否必须**|**描述**|
-|---|---|---|---|
-|`cmd`|String|是|必须为 `"add"`。|
-|`password`|String|是|管理密码。|
-|`url`|String|是|要存储的内容 (链接 URL、Base64 图片数据、纯文本等)。如果 system_type 为 link，将进行 URL 格式检查。|
-|`key`|String|否|自定义短链 Key。如果为空，系统将生成随机 Key。|
-
-#### 示例响应 (`status: 200`)
-
-JSON
-
-```
-{
-  "status": 200,
-  "key": "随机或自定义短链Key", 
-  "error": ""
-}
-```
+### 1. 添加/生成短链接
 
 #### 💻 `curl` 示例 (自定义 Key)
 
-Bash
-
 ```bash
-curl -X POST <YOUR_WORKER_URL> \
+curl -X POST https://<worker_domain>/<password<>/<type> \
 -H "Content-Type: application/json" \
 -d '{
     "cmd": "add",
     "password": "<YOUR_PASSWORD>",
     "url": "https://www.google.com/search?q=custom+key+example",
-    "key": "mykey" 
+    "key": "mykey"
 }'
+```
+
+#### 响应示例 (`status: 200`)
+
+```json
+{
+  "status": 200,
+  "key": "随机或自定义的短链Key", 
+  "error": ""
+}
 ```
 
 ---
 
-### 2. 查询单个链接 API
-
-查询指定 Key 对应的原始链接。
-
-|**参数 (JSON Body)**|**类型**|**是否必须**|**描述**|
-|---|---|---|---|
-|`cmd`|String|是|必须为 `"qry"`。|
-|`password`|String|是|管理密码。|
-|`key`|String|是|要查询的短链接 Key。|
-
-#### 示例响应 (`status: 200`)
-
-JSON
-
-```
-{
-  "status": 200,
-  "error": "",
-  "key": "mykey",
-  "url": "https://www.google.com/search?q=custom+key+example"
-}
-```
+### 2. 查询单个链接
 
 #### 💻 `curl` 示例
 
-Bash
-
 ```bash
-curl -X POST <YOUR_WORKER_URL> \
+curl -X POST https://<worker_domain>/<password> \
 -H "Content-Type: application/json" \
 -d '{
     "cmd": "qry",
@@ -86,99 +51,33 @@ curl -X POST <YOUR_WORKER_URL> \
 }'
 ```
 
----
+#### 响应示例 (`status: 200`)
 
-### 3. 删除短链接 API
-
-根据 Key 删除 KV 中存储的短链接及其计数 (如果启用计数)。
-
-|**参数 (JSON Body)**|**类型**|**是否必须**|**描述**|
-|---|---|---|---|
-|`cmd`|String|是|必须为 `"del"`。|
-|`password`|String|是|管理密码。|
-|`key`|String|是|要删除的短链接 Key。|
-
-#### 示例响应 (`status: 200`)
-
-JSON
-
-```
-{
-  "status": 200,
-  "key": "已删除的Key",
-  "error": ""
-}
-```
-
-#### 💻 `curl` 示例
-
-Bash
-
-```bash
-curl -X POST <YOUR_WORKER_URL> \
--H "Content-Type: application/json" \
--d '{
-    "cmd": "del",
-    "password": "<YOUR_PASSWORD>",
-    "key": "mykey"
-}'
-```
-
----
-
-### 4. 查询访问计数 API
-
-查询指定短链接的访问次数
-
-|**参数 (JSON Body)**|**类型**|**是否必须**|**描述**|
-|---|---|---|---|
-|`cmd`|String|是|必须为 `"qrycnt"`。|
-|`key`|String|是|要查询的短链接 Key (不包含 -count 后缀)|
-|`password`|String|是|管理密码。|
-
-#### 示例响应 (`status: 200`)
-
-JSON
-
-```
+```json
 {
   "status": 200,
   "error": "",
-  "key": "randomkey1",
-  "url": "42" // 短链接 "randomkey1" 的总访问次数
+  "key": "mykey",
+  "url": "https://www.google.com/search?q=custom+key+example"
 }
 ```
 
+### 3. 查询全部链接
+
 #### 💻 `curl` 示例
 
-Bash
-
 ```bash
-curl -X POST <YOUR_WORKER_URL> \
+curl -X POST https://<worker_domain><password> \
 -H "Content-Type: application/json" \
 -d '{
     "cmd": "qryall",
-    "key": "randomkey1",
     "password": "<YOUR_PASSWORD>"
 }'
 ```
 
----
+#### 响应示例 (`status: 200`)
 
-### 5. 查询全部链接 API
-
-列出 KV 存储中所有非保护、非计数、非 SHA512 哈希的 Key-Value 对。
-
-|**参数 (JSON Body)**|**类型**|**是否必须**|**描述**|
-|---|---|---|---|
-|`cmd`|String|是|必须为 `"qryall"`。|
-|`password`|String|是|管理密码。|
-
-#### 示例响应 (`status: 200`)
-
-JSON
-
-```
+```json
 {
   "status": 200,
   "error": "",
@@ -189,17 +88,57 @@ JSON
 }
 ```
 
+---
+
+### 4. 删除短链接
+
 #### 💻 `curl` 示例
 
-Bash
+```bash
+curl -X POST https://<worker_domain>/<password> \
+-H "Content-Type: application/json" \
+-d '{
+    "cmd": "del",
+    "password": "<YOUR_PASSWORD>",
+    "key": "mykey"
+}'
+```
+
+#### 响应示例 (`status: 200`)
+
+```json
+{
+  "status": 200,
+  "key": "已删除的Key",
+  "error": ""
+}
+```
+
+---
+
+### 5. 查询访问计数
+
+#### 💻 `curl` 示例
 
 ```bash
-curl -X POST <YOUR_WORKER_URL> \
+curl -X POST https://<worker_domain>/<password> \
 -H "Content-Type: application/json" \
 -d '{
     "cmd": "qryall",
+    "key": "randomkey1",
     "password": "<YOUR_PASSWORD>"
 }'
+```
+
+#### 响应示例 (`status: 200`)
+
+```json
+{
+  "status": 200,
+  "error": "",
+  "key": "randomkey1",
+  "url": "42" // 短链接 "randomkey1" 的总访问次数
+}
 ```
 
 ---
