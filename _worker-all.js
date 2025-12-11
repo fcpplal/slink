@@ -43,6 +43,47 @@ function base64ToBlob(base64String) {
   return new Blob([uInt8Array], { type: contentType });
 }
 
+// 获取图片类型
+function getBlobAndContentType(base64String) {
+    if (!base64String || !base64String.startsWith("data:image/")) {
+        return null; // 不是图片 Base64 格式
+    }
+
+    try {
+        const parts = base64String.split(';base64,');
+        if (parts.length !== 2) return null;
+        let contentType = parts[0].split(':')[1];
+        if (!contentType) return null;
+        const base64Data = parts[1];
+        
+        // Content-Type 嗅探
+        if (base64String.startsWith("data:image/jpeg")) {
+            contentType = "image/jpeg";
+        } else if (base64String.startsWith("data:image/png")) {
+            contentType = "image/png";
+        } else if (base64String.startsWith("data:image/gif")) {
+            contentType = "image/gif";
+        } else if (base64String.startsWith("data:image/webp")) {
+            contentType = "image/webp";
+        } else if (base64String.startsWith("data:image/svg+xml")) {
+            contentType = "image/svg+xml";
+        } else if (base64String.startsWith("data:image/bmp")) {
+             contentType = "image/bmp";
+        } else if (base64String.startsWith("data:image/tiff")) {
+             contentType = "image/tiff";
+        } else if (base64String.startsWith("data:image/x-icon")) {
+             contentType = "image/x-icon";
+        }
+
+        const optimizedBase64String = `data:${contentType};base64,${base64Data}`;
+        const blob = base64ToBlob(optimizedBase64String);
+        return { blob, contentType };
+    } catch (e) {
+        console.error("Base64解析或Blob创建错误:", e);
+        return null;
+    }
+}
+
 async function randomString(len) {
   len = len || 5;
   let chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
@@ -63,17 +104,12 @@ async function sha512(url) {
 }
 
 async function checkURL(URL) {
-  let str = URL;
-  let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
-  let objExp = new RegExp(Expression);
-  if (objExp.test(str) == true) {
-    if (str[0] == 'h')
-      return true;
-    else
-      return false;
-  } else {
-    return false;
-  }
+  let str = URL;
+  let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+  let objExp = new RegExp(Expression);
+  // 如果通过正则表达式，直接返回 true
+  if (objExp.test(str)) { return true; } 
+  else { return false; }
 }
 
 async function save_url(URL, env) {
@@ -148,10 +184,7 @@ async function handleRequest(request, env) {
       }
 
       // 从请求路径中判断当前系统模式
-      let current_system_type = "link"; // 默认link
-      if (pathSegments.length >= 2 && pathSegments[0] === password_value) { 
-          current_system_type = pathSegments[1];
-      }
+      const current_system_type = pathSegments[1] || "link";
       
       let req;
       try {
@@ -338,7 +371,8 @@ async function handleRequest(request, env) {
   
   if (params) { value = value + params }
 
-  // 智能判断返回不同响应
+  // 智能判断系统类型返回不同响应
+  const imageResult = getBlobAndContentType(value);
   if (value && value.startsWith("data:image")) {
     try {
         const blob = base64ToBlob(value);
@@ -357,19 +391,16 @@ async function handleRequest(request, env) {
         });
     } catch (e) {
       console.error("图片处理错误:", e);
-      // 如果处理失败，回退为文本响应
-      return new Response(value, {
+      return new Response(value, { // 判断失败则返回文本类型
         headers: { "Content-type": "text/plain;charset=UTF-8;" },
       });
     }
   } 
-  // 判断是否为 URL (如果包含 http/https，则认为是短链接)
-  else if (checkURL(value)) {
+  else if (checkURL(value)) { // 判断是否为 URL，是则为短链接)
     return Response.redirect(value, 302);
   } 
-  // 否则，视为纯文本/记事本 (note/paste)
   else {
-    return new Response(value, {
+    return new Response(value, { // 否则，视为纯文本/记事本 (note/paste)
         headers: { "Content-type": "text/plain;charset=UTF-8;" },
     });
   }
