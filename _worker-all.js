@@ -109,7 +109,7 @@ async function handleRequest(request, env) {
   // 读取环境变量配置
   const config = {
     password: env.PASSWORD || "admin",
-    //system_type: env.TYPE || "link",
+    system_type: env.TYPE || "link",
     unique_link: env.UNIQUE_LINK === "false" ? false : true,
     custom_link: env.CUSTOM_LINK === "false" ? false : true,
     overwrite_kv: env.OVERWRITE_KV === "false" ? false : true,
