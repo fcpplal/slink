@@ -252,7 +252,8 @@ async function handleRequest(request, env) {
             }
 
             // 查询访问次数，如果不存在则返回 "0"
-            let value = await env.LINKS.get(req_key) // req_key 此时是 "xyz-count"
+            let count_key = req_key + "-count";
+            let value = await env.LINKS.get(count_key) // 查询 "短key-count" 键
             let final_count = value != null ? value : "0"; // 默认值为 "0"
             let jsonObjectRetrun = JSON.parse(`{"status":200, "error":"", "key":"", "count":""}`);
             jsonObjectRetrun.key = req_key;
@@ -321,11 +322,8 @@ async function handleRequest(request, env) {
         })
     }
 
-    // 在KV中查询 短链接 对应的原链接
     let value = await env.LINKS.get(path); 
-    // 如果path是'password', 让查询结果为空
     if (protect_keylist.includes(path)) { value = "" }
-    // 如果KV中没有数据, 返回404
     if (!value) { return new Response(html404, { headers: response_header, status: 404 }) }
 
     // 计数功能
