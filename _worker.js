@@ -45,27 +45,19 @@ async function randomString(len) {
 
 async function sha512(url) {
   url = new TextEncoder().encode(url)
-  const url_digest = await crypto.subtle.digest(
-    { name: "SHA-512" },
-    url
-  )
+  const url_digest = await crypto.subtle.digest( { name: "SHA-512" }, url )
   const hashArray = Array.from(new Uint8Array(url_digest));
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex
 }
 
 async function checkURL(URL) {
-  let str = URL;
-  let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
-  let objExp = new RegExp(Expression);
-  if (objExp.test(str) == true) {
-    if (str[0] == 'h')
-      return true;
-    else
-      return false;
-  } else {
-    return false;
-  }
+  let str = URL;
+  let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+  let objExp = new RegExp(Expression);
+  // 如果通过正则表达式，直接返回 true
+  if (objExp.test(str)) { return true; } 
+  else { return false; }
 }
 
 // 核心函数——KV操作
@@ -82,11 +74,8 @@ async function save_url(URL, env) {
 
 async function is_url_exist(url_sha512, env) {
   let is_exist = await env.LINKS.get(url_sha512)
-  if (is_exist == null) {
-    return false
-  } else {
-    return is_exist
-  }
+  if (is_exist == null) { return false }
+  else { return is_exist }
 }
 
 async function system_password(env, config) {
@@ -150,9 +139,7 @@ async function handleRequest(request, env) {
                 status: 200,
                 visit_count: config.visit_count,
                 custom_link: config.custom_link
-            }), {
-                headers: response_header,
-            })
+            }), { headers: response_header, })
         }
 
         if (req_cmd == "add") {
@@ -186,9 +173,7 @@ async function handleRequest(request, env) {
                     random_key = url_key
                 } else {
                     random_key = await save_url(req_url, env) 
-                    if (random_key) {
-                        await env.LINKS.put(url_sha512, random_key) 
-                    }
+                    if (random_key) { await env.LINKS.put(url_sha512, random_key) }
                 }
             } else {
                 random_key = await save_url(req_url, env) 
@@ -209,13 +194,8 @@ async function handleRequest(request, env) {
                     headers: response_header,
                 })
             }
-            
             await env.LINKS.delete(req_key) 
-            // 计数功能打开的话, 要把计数的那条KV也删掉
-            if (config.visit_count) {
-                await env.LINKS.delete(req_key + "-count") 
-            }
-
+            if (config.visit_count) { await env.LINKS.delete(req_key + "-count") }
             return new Response(`{"status":200, "key": "` + req_key + `", "error": ""}`, {
                 headers: response_header,
             })
@@ -231,9 +211,7 @@ async function handleRequest(request, env) {
                 let jsonObjectRetrun = JSON.parse(`{"status":200, "error":"", "key":"", "url":""}`);
                 jsonObjectRetrun.key = req_key;
                 jsonObjectRetrun.url = value;
-                return new Response(JSON.stringify(jsonObjectRetrun), {
-                    headers: response_header,
-                })
+                return new Response(JSON.stringify(jsonObjectRetrun), { headers: response_header, })
             } else {
                 return new Response(`{"status":500, "key": "` + req_key + `", "error":"错误: key不存在"}`, {
                     headers: response_header,
@@ -273,19 +251,15 @@ async function handleRequest(request, env) {
                 let jsonObjectRetrun = JSON.parse(`{"status":200, "error":"", "kvlist": []}`);
                 for (let i = 0; i < keyList.keys.length; i++) {
                     let item = keyList.keys[i];
-                    
                     if (protect_keylist.includes(item.name)) { continue; } // 过滤保护列表中的key
                     if (item.name.endsWith("-count")) { continue; } // 过滤计数key
                     if (item.name.length === 128) { continue; } // 过滤SHA512哈希key
-
                     let url = await env.LINKS.get(item.name); 
                     let newElement = { "key": item.name, "value": url };
                     jsonObjectRetrun.kvlist.push(newElement);
                 }
 
-                return new Response(JSON.stringify(jsonObjectRetrun), {
-                    headers: response_header,
-                })
+                return new Response(JSON.stringify(jsonObjectRetrun), { headers: response_header, })
             } else {
                 return new Response(`{"status":500, "error":"错误: 加载key列表失败"}`, {
                     headers: response_header,
@@ -293,9 +267,7 @@ async function handleRequest(request, env) {
             }
         }
     } else if (request.method === "OPTIONS") {
-        return new Response(``, {
-            headers: response_header,
-        })
+        return new Response(``, { headers: response_header, })
     }
 
     // 以下是浏览器直接访问worker页面的处理
@@ -306,10 +278,7 @@ async function handleRequest(request, env) {
 
     // 如果path为空, 返回404
     if (!path) {
-        return new Response(html404, {
-          headers: response_header,
-          status: 404
-        })
+        return new Response(html404, { headers: response_header, status: 404 })
     }
 
     // 如果path符合password 返回管理页面
@@ -317,9 +286,7 @@ async function handleRequest(request, env) {
         let index = await fetch(index_html)
         index = await index.text()
         index = index.replace(/__PASSWORD__/gm, password_value)
-        return new Response(index, {
-          headers: response_header,
-        })
+        return new Response(index, { headers: response_header, })
     }
 
     let value = await env.LINKS.get(path); 
@@ -371,16 +338,12 @@ async function handleRequest(request, env) {
         } catch (e) {
           console.error("图片处理错误:", e);
           return new Response(value, {
-            headers: {
-              "Content-type": "text/plain;charset=UTF-8;",
-            },
+            headers: { "Content-type": "text/plain;charset=UTF-8;", },
           });
         }
     } else {
         return new Response(value, {
-          headers: {
-            "Content-type": "text/plain;charset=UTF-8;",
-          },
+          headers: { "Content-type": "text/plain;charset=UTF-8;", },
         });
     }
 }
