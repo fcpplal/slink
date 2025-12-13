@@ -13,9 +13,10 @@ body {
 
 /* 主容器 */
 .container {
+  width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  margin-inline: auto;
+  padding: 20px;
 }
 
 /* 按钮和表单 */
