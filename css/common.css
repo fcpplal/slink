@@ -17,7 +17,7 @@
     --input-bg: white;
     --border-color: #ced4da;
     --scrollbar-track: #f1f1f1;
-    --qrcode-bg: white;
+    --qrcode-bg: rgba(220, 226, 234, 0.8);
 }
 
 body {
@@ -67,18 +67,50 @@ body.dark-mode {
     --input-bg: #4a5568;
     --border-color: #6a7588;
     --scrollbar-track: #2d3748;
-    --qrcode-bg: rgba(103, 119, 148, 0.8);
+    --qrcode-bg: rgba(73, 90, 122, 0.8);
 }
 body.dark-mode .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
 
-/* 主题切换按钮 */
-.theme-toggle-btn {
+/* 角标元素 */
+.corner-btns {
     position: fixed;
     top: 30px; 
     right: 30px;
-    z-index: 1000; 
-    color: var(--text-primary);
-    background-color: transparent;
+    z-index: 1000;
+    display: flex; 
+    gap: 10px;
+}
+/* 模式切换下拉菜单 */
+.mode-toggle-wrapper {
+    position: relative;
+    height: fit-content; 
+}
+.mode-select-dropdown {
+    position: absolute;
+    top: 100%; 
+    right: 0;
+    margin: 5px 0 0 0;
+    padding: 10px 0;
+    background-color: var(--qrcode-bg);
+    border: var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    list-style: none;
+    display: none;
+    min-width: 100px;
+}
+.mode-select-dropdown li {
+    padding: 5px 15px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 14px;
     transition: all 0.2s;
 }
+.mode-select-dropdown.active { display: block; }
+.mode-select-dropdown li:hover { color: var(--primary-color); font-weight: bold; }
+
+/* 切换按钮 */
+.type-toggle-btn,
+.theme-toggle-btn { color: var(--text-primary); background-color: transparent; transition: all 0.2s; }
+.type-toggle-btn:hover,
 .theme-toggle-btn:hover { background-color: rgba(0, 0, 0, 0.2); }

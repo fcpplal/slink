@@ -48,17 +48,35 @@
 
 详见 [博客教程](https://blog.notett.com/post/2025/12/251212-slink/)
 
+环境变量：
+
+| 变量名             | 默认值     | 描述                                     |
+| ----------------- | ------- | -------------------------------------- |
+| **ADMIN**         | link    | 管理密码，访问 `/link` 进入主页                   |
+| **PASSWORD**      | apipass | API 秘钥，小白不用管它                          |
+| **UNIQUE_LINK**   | true    | 是否开启唯一链接功能（相同 URL 只生成一个短链）             |
+| **CUSTOM_LINK**   | true    | 是否允许用户自定义短链 Key                        |
+| **OVERWRITE_KV**  | true    | 是否允许覆盖已存在的自定义短链 Key                    |
+| **SNAPCHAT_MODE** | false   | 是否启用阅后即焚模式（访问一次后删除）                    |
+| **VISIT_COUNT**   | false   | 是否启用访问计数功能                             |
+| **LOAD_KV**       | true    | 是否允许从 KV 加载数据，需要绑定变量名为 `LINKS` 的 KV 空间 |
+
 ---
 
 ## API 接口说明
 
-| 方法   | API 端点                                | 参数            | cmd命令  | 描述      |
-| ---- | ------------------------------------- | ------------- | ------ | ------- |
-| POST | `/<password>/<type>`，示例 `/admin/link` | cmd, url, key | add    | 创建短链接   |
-| POST | `/<password>`，示例 `/admin`             | cmd, key      | del    | 删除短链接   |
-| POST | `/<password>`，示例 `/admin`             | cmd, key      | qry    | 查询短链接   |
-| POST | `/<password>`，示例 `/admin`             | cmd, key      | qrycnt | 查询访问计数  |
-| POST | `/<password>`，示例 `/admin`             | cmd           | qryall | 查询所有短链接 |
+- API 端点：`/<ADMIN>`，示例 `/link`
+- 请求体：`"Content-type": "application/json"`
+
+| 方法   | 参数             | cmd 命令 | 描述                     |
+| ---- | ----------------- | -------- | ------------------------ |
+| POST | cmd, url, key, password, type | add    | 创建短链接，type 支持 `link`、`img`、`note`、`paste`  |
+| POST | cmd, key, password            | del    | 删除单个短链接   |
+| POST | cmd, key, password            | delall | 批量删除短链接，key 格式：`["key1", "key2", "key3"]`, 如果 key 为空，则删除所有 |
+| POST | cmd, key, password            | qry    | 查询短链接    |
+| POST | cmd, key, password            | qrycnt | 查询访问计数    |
+| POST | cmd, password                 | qryall | 查询所有短链接   |
+
 
 详见 [API 文档](https://github.com/yutian81/slink/blob/main/API.md)
 

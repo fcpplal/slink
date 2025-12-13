@@ -1,5 +1,5 @@
 name = "slink"
-main = "_worker-all.js"
+main = "_worker.js"
 compatibility_date = "2025-11-17"
 keep_vars = true
 

@@ -1,5 +1,5 @@
 // 受保护的KEY列表
-const protect_keylist = ["password", "link", "img", "note", "paste", "admin"];
+const protect_keylist = ["password", "link", "img", "note", "paste"];
 
 // 主导出函数
 export default {
@@ -33,57 +33,38 @@ async function get404Html() {
 }
 
 // 工具函数
-function base64ToBlob(base64String) {
-  var parts = base64String.split(';base64,');
-  var contentType = parts[0].split(':')[1];
-  var raw = atob(parts[1]);
+function base64ToBlob(contentType, base64Data) {
+  var raw = atob(base64Data); // 直接使用 Base64 数据部分
   var rawLength = raw.length;
   var uInt8Array = new Uint8Array(rawLength);
-  for (var i = 0; i < rawLength; ++i) {
-    uInt8Array[i] = raw.charCodeAt(i);
-  }
+  for (var i = 0; i < rawLength; ++i) { uInt8Array[i] = raw.charCodeAt(i); }
   return new Blob([uInt8Array], { type: contentType });
 }
 
 // 获取图片类型
 function getBlobAndContentType(base64String) {
-  if (!base64String || !base64String.startsWith("data:image/")) {
-    return null; // 不是图片 Base64 格式
-  }
-
+  if (!base64String || !base64String.startsWith("data:image/")) { return null; }
+  
   try {
     const parts = base64String.split(';base64,');
     if (parts.length !== 2) return null;
     let contentType = parts[0].split(':')[1];
     if (!contentType) return null;
-    const base64Data = parts[1];
-    
+    const base64Data = parts[1]; // 获取到 Base64 数据主体
+  
     // Content-Type 嗅探
-    if (base64String.startsWith("data:image/jpeg")) {
-      contentType = "image/jpeg";
-    } else if (base64String.startsWith("data:image/png")) {
-      contentType = "image/png";
-    } else if (base64String.startsWith("data:image/gif")) {
-      contentType = "image/gif";
-    } else if (base64String.startsWith("data:image/webp")) {
-      contentType = "image/webp";
-    } else if (base64String.startsWith("data:image/svg+xml")) {
-      contentType = "image/svg+xml";
-    } else if (base64String.startsWith("data:image/bmp")) {
-      contentType = "image/bmp";
-    } else if (base64String.startsWith("data:image/tiff")) {
-      contentType = "image/tiff";
-    } else if (base64String.startsWith("data:image/x-icon")) {
-      contentType = "image/x-icon";
-    }
-
-    const optimizedBase64String = `data:${contentType};base64,${base64Data}`;
-    const blob = base64ToBlob(optimizedBase64String);
+    if (base64String.startsWith("data:image/jpeg")) { contentType = "image/jpeg"; }
+    else if (base64String.startsWith("data:image/png")) { contentType = "image/png"; }
+    else if (base64String.startsWith("data:image/gif")) { contentType = "image/gif"; }
+    else if (base64String.startsWith("data:image/webp")) { contentType = "image/webp"; }
+    else if (base64String.startsWith("data:image/svg+xml")) { contentType = "image/svg+xml"; }
+    else if (base64String.startsWith("data:image/bmp")) { contentType = "image/bmp"; }
+    else if (base64String.startsWith("data:image/tiff")) { contentType = "image/tiff"; }
+    else if (base64String.startsWith("data:image/x-icon")) { contentType = "image/x-icon"; }
+    // 直接传入 Content-Type 和 Base64 数据主体
+    const blob = base64ToBlob(contentType, base64Data);
     return { blob, contentType };
-  } catch (e) {
-    console.error("Base64解析或Blob创建错误:", e);
-    return null;
-  }
+  } catch (e) { console.error("Base64解析或Blob创建错误:", e); return null; }
 }
 
 async function randomString(len) {
@@ -106,11 +87,10 @@ async function sha512(url) {
 }
 
 async function checkURL(URL) {
-  let str = URL;
-  let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
-  let objExp = new RegExp(Expression);
-  if (objExp.test(str)) { return true; } 
-  else { return false; }
+  try {
+    const urlObj = new URL(URL);
+    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+  } catch (e) { return false; }
 }
 
 async function save_url(URL, env) {
@@ -222,7 +202,7 @@ async function handleRequest(request, env, ctx) {
         if (config.custom_link && req_key) {
           if (isKeyProtected(req_key)) {
             response_data = { status: 403, key: req_key, error: "错误: key在保护列表中" }; http_status = 403;
-          } else if (!config.overwrite_kv && await is_url_exist(req_key, env)) {
+          } else if (!config.overwrite_kv && await env.LINKS.get(req_key) != null) {
             response_data = { status: 409, key: req_key, error: "错误: 已存在的key" }; http_status = 409;
           } else {
             await env.LINKS.put(req_key, req_url);
@@ -278,7 +258,10 @@ async function handleRequest(request, env, ctx) {
         
           if (Array.isArray(req_key) && req_key.length > 0) {
             // 批量删除：直接使用传入的 key 数组，稍后统一过滤
-            keysToProcess = req_key; 
+            keysToProcess = req_key;
+            if (config.visit_count) {
+              keysToProcess = [...keysToProcess, ...req_key.map(k => k + "-count")];
+            }
           } else {
             // 全部删除：使用 list() 获取所有 Key，只保留受保护的 key
             const keyListToDelete = await env.LINKS.list();
@@ -294,15 +277,15 @@ async function handleRequest(request, env, ctx) {
               deletedCount++;
               return true;
             });
-          // 并行执行所有删除操作
-          const deletePromises = keysToDelete.map(keyName => env.LINKS.delete(keyName));
-          await Promise.all(deletePromises); 
-          response_data = { 
-            status: 200, 
-            error: "", 
-            deleted_count: deletedCount,
-            skipped_protected: protectedSkipped 
-          };
+            // 并行执行所有删除操作
+            const deletePromises = keysToDelete.map(keyName => env.LINKS.delete(keyName));
+            await Promise.all(deletePromises); 
+            response_data = { 
+              status: 200, 
+              error: "", 
+              deleted_count: deletedCount,
+              skipped_protected: protectedSkipped 
+            };
           } else {
             response_data = { status: 200, error: "警告: 没有可删除的key", deleted_count: 0 };
           }
@@ -385,13 +368,14 @@ async function handleRequest(request, env, ctx) {
       index = index.replace(/__PASSWORD__/gm, api_password);
       return new Response(index, { headers: html_response_header, status: 200 })
     }
+    return response404();
   }
 
   // 处理 /短链 或 /图床Key 的访问
   let path = decodeURIComponent(pathSegments[0] || "");
   const params = requestURL.search;
+  if (protect_keylist.includes(path)) { return response404(); }
   let value = await env.LINKS.get(path); 
-  if (protect_keylist.includes(path)) { value = "" }
   if (!value) { return response404(); }
 
   // 计数功能
