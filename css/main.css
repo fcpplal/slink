@@ -133,4 +133,5 @@ body.dark-mode .form-control::placeholder, body.dark-mode .result-tip { color: v
   .card { flex: 1 1 100%; width: 100%; min-width: 100%; max-width: 100%; margin-bottom: 0; }
   .form-control::placeholder, .text-center { font-size: 13px; }
   .theme-toggle-btn { right: 15px; }
+  .corner-btns { margin-bottom: 20px; }
 }
