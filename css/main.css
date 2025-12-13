@@ -129,7 +129,7 @@ body.dark-mode .form-control::placeholder, body.dark-mode .result-tip { color: v
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
-  .cards-container { flex-direction: column; gap: 20px; }
+  .cards-container { flex-direction: column; gap: 20px; margin-bottom: 20px }
   .card { flex: 1 1 100%; width: 100%; min-width: 100%; max-width: 100%; margin-bottom: 0; }
   .form-control::placeholder, .text-center { font-size: 13px; }
   .theme-toggle-btn { right: 15px; }
