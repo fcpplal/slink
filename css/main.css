@@ -140,7 +140,7 @@ body {
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
-  .cards-container { flex-direction: column; gap: 20px; margin-bottom: 40px; }
+  .cards-container { flex-direction: column; gap: 20px; margin-bottom: 20px; }
   .card { flex: 1 1 100%; width: 100%; min-width: 100%; max-width: 100%; margin-bottom: 0; }
   .form-control::placeholder, .text-center { font-size: 13px; }
   .corner-btns { top: 5px; right: 15px}
