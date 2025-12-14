@@ -8,7 +8,7 @@ export default {
   }
 };
 
-const system_base_url = "https://blog2.811520.xyz/slink"; // 基础URL
+const system_base_url = "https://pan.811520.xyz/cdn/slink/1.0"; // 基础URL
 const main_html = `${system_base_url}/index.html`; // 默认为短链页面
 const html_404 = `${system_base_url}/404.html`;
 
