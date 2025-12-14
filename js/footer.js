@@ -1,10 +1,5 @@
-/**
- * footer.js
- * 负责在 DOM 加载完成后，将页脚的 HTML 代码插入到主容器 .container 元素之后
- */
-
+// 将页脚的 HTML 代码插入到主容器 .container 元素之后
 document.addEventListener('DOMContentLoaded', function () {
-    // 获取当前年份和起始年份
     const currentYear = new Date().getFullYear();
     const startYear = 2025;
     const yearText = currentYear === startYear 
@@ -32,4 +27,3 @@ document.addEventListener('DOMContentLoaded', function () {
         mainContentContainer.insertAdjacentHTML('afterend', htmlToInsert);
     }
 });
-

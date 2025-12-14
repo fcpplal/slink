@@ -1,4 +1,8 @@
-// 主题切换逻辑 (Theme Toggler)
+// ====================================
+// 主题切换与模块切换
+// ====================================
+
+// 主题切换按逻辑
 function applyTheme(theme) {
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     if (!themeToggleBtn) { return; }
@@ -29,10 +33,9 @@ function initThemeToggle() {
     }
 }
 
-// 动态生成并插入角标 HTML
+// 插入模式切换与主题切换角标 HTML
 function createCornerHTML() {
     const adminPathPrefix = window.adminPath || '';
-    
     // 定义模式切换列表
     const modes = [ // 此处为相对于管理路径
         { path: '/', icon: 'fas fa-link', text: '短链' }, 
@@ -50,11 +53,11 @@ function createCornerHTML() {
         } 
         else { finalPath = mode.path; } // 未知路径返回404
         return `<li data-path="${finalPath}">
-                 <i class="${mode.icon}"></i> ${mode.text}
+                 <i class="${mode.icon} me-2"></i>${mode.text}
                </li>`;
     }).join('');
 
-    // 4. 构建完整的角标按钮区域 HTML
+    // 构建完整的角标按钮区域 HTML
     const cornerBtnsHTML = `
         <div class="corner-btns">
             <div class="mode-toggle-wrapper">
@@ -74,6 +77,7 @@ function createCornerHTML() {
     document.body.insertAdjacentHTML('afterbegin', cornerBtnsHTML); // 插入到 body 的最前面
 }
 
+// 模式切换下拉菜单
 function initModeSelector() {
     const toggleButton = document.getElementById('typeToggleBtn');
     const dropdown = document.getElementById('modeSelectDropdown');

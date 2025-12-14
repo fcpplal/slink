@@ -17,7 +17,7 @@
 
 ### 通用功能
 
-- **KV 数据管理：** 提供管理面板，支持 **查询、删除** 链接
+- **KV 数据管理：** 提供管理面板，支持 **添加、查询、删除** 链接
 - **自定义名：** 所有模块均可自定义名称并支持**中文名**
 - **访问统计：** 可选开启，对每个短链接记录**访问次数**
 - **阅后即焚：** 可选开启，链接被**访问后**立即从 KV 中**删除**
@@ -48,7 +48,7 @@
 
 | 变量名             | 默认值     | 描述                                     |
 | ----------------- | ------- | -------------------------------------- |
-| **ADMIN**         | admin    | 管理密码，访问 `/admin` 进入主页                   |
+| **ADMIN**         | admin   | 管理密码，访问 `/admin` 进入主页                   |
 | **PASSWORD**      | apipass | API 秘钥，小白不用管它                          |
 | **UNIQUE_LINK**   | true    | 是否开启唯一链接功能（相同 URL 只生成一个短链）             |
 | **CUSTOM_LINK**   | true    | 是否允许用户自定义短链 Key                        |
@@ -64,15 +64,23 @@
 - API 端点：`/<ADMIN>`，示例 `/admin`
 - 请求体：`"Content-type": "application/json"`
 
-| 方法   | 参数             | cmd 命令 | 描述                     |
-| ---- | ----------------- | -------- | ------------------------ |
-| POST | cmd, url, key, password, type | add    | 创建短链接，type 支持 `link`、`img`、`note`、`paste`  |
-| POST | cmd, key, password            | del    | 删除单个短链接   |
-| POST | cmd, key, password            | delall | 批量删除短链接，key 格式：`["key1", "key2", "key3"]`, 如果 key 为空，则删除所有 |
-| POST | cmd, key, password            | qry    | 查询短链接    |
-| POST | cmd, key, password            | qrycnt | 查询访问计数    |
-| POST | cmd, password                 | qryall | 查询所有短链接   |
+| 方法  | 参数                          | cmd 命令 | 描述       |
+| ---- | ----------------------------- | ------- | ----------- |
+| POST | cmd, url, key, password, type | add    | 创建短链接   |
+| POST | cmd, key, password            | del    | 删除短链接   |
+| POST | cmd, key, password            | qry    | 查询短链接   |
+| POST | cmd, key, password            | qrycnt | 查询访问计数 |
 
+- add 命令说明：
+  - 当 key 为空时，生成随机短链接
+  - 当 key 为单个字符串，使用该字符串作为短链接 Key
+  - key 不支持数组格式，即不支持批量创建短链接
+  - type 为链接模式，支持 `link`、`img`、`note`、`paste` 四种类型
+
+- del、qry、qrycnt 命令说明：
+  - 当 key 为空时，对所有短链接操作
+  - 当 key 为单个字符串时，对该短链接操作，格式为 `key`
+  - 当 key 为数组时，对数组中的每个短链接操作，格式为 `["key1", "key2", "key3"]`
 
 详见 [API 文档](https://github.com/yutian81/slink/blob/main/API.md)
 
