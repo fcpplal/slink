@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f517.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink@main/css/main.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink@main/css/common.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/common.css">
     
     <style>
         .container { min-height: calc(100vh - 40px); display: flex; flex-direction: column; }
@@ -19,7 +19,7 @@
         #urlList { flex-grow: 1; padding-right: 5px; }
         .right-column-card { height: 100%; }
         .card-body.preview-body { flex-grow: 1; display: flex; flex-direction: column; padding-bottom: 20px; }
-        .markdown-preview { flex-grow: 1; min-height: 200px; overflow-y: auto; border: 1px solid var(--border-color);  padding: 15px; border-radius: .375rem; background-color: var(--card-bg); }
+        .markdown-preview { flex-grow: 1; min-height: 200px; overflow-y: auto; border: 1px solid var(--border-color);  padding: 15px; border-radius: .375rem; background-color: var(--input-bg); }
         @media (max-width: 768px) {
             .container { min-height: 100vh; }
             .row { flex-grow: 0; align-items: flex-start; }
@@ -36,7 +36,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="display-5 fw-bold mb-3">
-                <i class="fas fa-file-alt me-2"></i>在线记事本
+                <i class="fas fa-note-sticky me-2"></i>在线记事本
             </h1>
             <p class="lead fw-medium">基于 CF Worker 和 KV 创建的在线记事本服务</p>
         </div>
@@ -151,9 +151,9 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/gh/lrsjng/jquery-qrcode@0.18.0/dist/jquery-qrcode.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
-    <script src="https://blog2.811520.xyz/slink/js/main.js" crossorigin="anonymous"></script>
-    <script src="https://blog2.811520.xyz/slink/js/theme.js" crossorigin="anonymous"></script>
-    <script src="https://blog2.811520.xyz/slink/js/footer.js" crossorigin="anonymous"></script>
+    <script src="../js/main.js" crossorigin="anonymous"></script>
+    <script src="../js/theme.js" crossorigin="anonymous"></script>
+    <script src="../js/footer.js" crossorigin="anonymous"></script>
     
     <script>
         function syncMarkDownView() {
@@ -177,6 +177,4 @@
         buildValueItemFunc = buildValueMarkdown; 
     </script>
 </body>
-
 </html>
-
