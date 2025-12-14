@@ -25,9 +25,9 @@ function clearLocalStorage() {
 
 // 显示结果模态框
 function showResultModal(message) {
-    document.getElementById("result").innerHTML = message;
-    const modal = new bootstrap.Modal(document.getElementById('resultModal'));
-    modal.show();
+  document.getElementById("result").innerHTML = message;
+  const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+  modal.show();
 }
 
 // 模态框复制短链接
@@ -396,6 +396,7 @@ function loadKV() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       cmd: "qry",
+      key: null,
       password: api_password
     })
   })
