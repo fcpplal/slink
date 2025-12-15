@@ -3,6 +3,8 @@ let apiSrv = window.location.pathname;
 let buildValueItemFunc = buildValueTxt;
 let longUrlElement;
 let urlListElement;
+let keyPhraseElement;
+let keyForQueryElement;
 let api_password;
 
 // 路径解析和模式确定
@@ -118,6 +120,13 @@ function isDataMode(value, mode) {
   return modeConfig.check(value);
 }
 
+// 清除所有输入框内容
+function clearInputFields() {
+  if (longUrlElement) { longUrlElement.value = ''; }
+  if (keyPhraseElement) { keyPhraseElement.value = ''; }
+  if (keyForQueryElement) { keyForQueryElement.value = ''; }
+}
+
 // --- 列表管理函数 ---
 
 // 不同模式下，在列表中加载不同数据
@@ -229,9 +238,9 @@ async function shorturl() {
   if (longUrlElement.value == "") { showResultModal("URL不能为空!"); return; }
 
   const longUrl = longUrlElement.value.trim();
-  const keyPhrase = document.getElementById('keyPhrase').value
+  const keyPhrase = keyPhraseElement.value
     .replace(/[\s#*|]/g, "-"); // 替换非法字符
-  document.getElementById('keyPhrase').value = keyPhrase;
+  keyPhraseElement.value = keyPhrase;
   setButtonState("addBtn", "loading");
 
   try {
@@ -378,18 +387,15 @@ async function loadKV() {
     if (data.status == 200) {
       clearLocalStorage();
       let loadedCount = 0;
-      longUrlElement.value = "";
-
+      clearInputFields(); // 清除所有输入框内容
       for (const item of data.kvlist) {
         const key = item.key;
         const value = item.value;
-        
         if (isDataMode(value, currentMode)) { 
           localStorage.setItem(key, value); 
           loadedCount++; 
         }
       }
-
       loadUrlList();
       const modeName = getModeName(currentMode);
       showResultModal(`成功加载 ${loadedCount} 条${modeName}记录`);
@@ -412,6 +418,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
   longUrlElement = document.querySelector("#longURL");
   urlListElement = document.querySelector("#urlList");
+  keyPhraseElement = document.getElementById('keyPhrase');
+  keyForQueryElement = document.getElementById('keyForQuery');
   api_password = document.querySelector("#passwordText").value;
   document.getElementById("passwordText").readOnly = true;
 
@@ -429,14 +437,13 @@ document.addEventListener('DOMContentLoaded', function () {
         window.visit_count_enabled = data.visit_count;
         window.allow_custom_key = data.custom_link; // 后端返回 custom_link
 
-        const customKeyInput = document.getElementById('keyPhrase');
         if (data.custom_link) {
-          customKeyInput.disabled = false;
-          customKeyInput.placeholder = customKeyInput.getAttribute('placeholder') || "输入大小写字母和数字";
+          keyPhraseElement.disabled = false;
+          keyPhraseElement.placeholder = keyPhraseElement.getAttribute('placeholder') || "输入大小写字母和数字";
         } else {
-          customKeyInput.disabled = true;
-          customKeyInput.placeholder = "功能未开启, 随机生成短链Key";
-          customKeyInput.value = "";
+          keyPhraseElement.disabled = true;
+          keyPhraseElement.placeholder = "功能未开启, 随机生成短链Key";
+          keyPhraseElement.value = "";
         }
       }
     } catch (err) {
