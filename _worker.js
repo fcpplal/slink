@@ -86,11 +86,12 @@ async function sha512(url) {
   return hashHex
 }
 
-async function checkURL(URL) {
-  try {
-    const urlObj = new URL(URL);
-    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-  } catch (e) { return false; }
+function checkURL(URL) {
+  let str = URL;
+  let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+  let objExp = new RegExp(Expression);
+  if (objExp.test(str)) { return true; } 
+  else { return false; }
 }
 
 async function save_url(URL, env) {
@@ -142,7 +143,7 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         
       case "add":
         if (req_type === "link") {
-          if (!await checkURL(req_url)) {
+          if (checkURL(req_url)) {
             response_data.error = `错误: 链接类型必须是有效的URL`; http_status = 400;
             break;
           }
