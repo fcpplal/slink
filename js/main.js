@@ -146,11 +146,11 @@ function loadUrlList() {
 function addUrlToList(shortUrl, longUrl) {
   const urlList = urlListElement;
   const child = document.createElement('div');
-  child.classList.add("list-group-item", "py-2"); // 增加垂直填充
+  child.classList.add("list-group-item");
   
   // 短链接区域 (input-group)
   const keyItem = document.createElement('div');
-  keyItem.classList.add("input-group", "mb-1"); // 增加底部边距
+  keyItem.classList.add("input-group");
 
   // 短链接文本
   const keyTxt = document.createElement('span');
@@ -165,7 +165,6 @@ function addUrlToList(shortUrl, longUrl) {
     { title: "复制短链接", icon: "copy", color: "success", id: `copyBtn-${shortUrl}`, action: () => copyShortUrl(`${window.location.protocol}//${window.location.host}/${shortUrl}`, `copyBtn-${shortUrl}`) },
     { title: "显示二维码", icon: "qrcode", color: "info", id: `qrcodeBtn-${shortUrl}`, action: () => toggleQrcode(shortUrl) },
   ];
-
   buttonsConfig.forEach(config => {
     const btn = document.createElement('button');
     btn.setAttribute('type', 'button');
@@ -176,13 +175,12 @@ function addUrlToList(shortUrl, longUrl) {
     btn.onclick = config.action;
     keyItem.appendChild(btn);
   });
-  
   child.appendChild(keyItem);
 
   // 二维码占位
   const qrcodeContainer = document.createElement('div');
   qrcodeContainer.setAttribute('id', 'qrcode-' + shortUrl);
-  qrcodeContainer.classList.add('qrcode-container', 'my-2'); // 增加垂直边距
+  qrcodeContainer.classList.add('qrcode-container');
   child.appendChild(qrcodeContainer);
   
   // 长链接信息 (使用 buildValueItemFunc)
