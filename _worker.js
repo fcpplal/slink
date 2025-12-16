@@ -1,5 +1,5 @@
 // 受保护的KEY列表
-const protect_keylist = ["password", "link", "img", "note"];
+const protect_keylist = ["password", "link", "note"];
 
 // 主导出函数
 export default {
@@ -34,39 +34,6 @@ async function get404Html() {
 }
 
 // 工具函数
-function base64ToBlob(contentType, base64Data) {
-  var raw = atob(base64Data);
-  var rawLength = raw.length;
-  var uInt8Array = new Uint8Array(rawLength);
-  for (var i = 0; i < rawLength; ++i) { uInt8Array[i] = raw.charCodeAt(i); }
-  return new Blob([uInt8Array], { type: contentType });
-}
-
-function getBlobAndContentType(base64String) {
-  if (!base64String || !base64String.startsWith("data:image/")) { return null; }
-  
-  try {
-    const parts = base64String.split(';base64,');
-    if (parts.length !== 2) return null;
-    let contentType = parts[0].split(':')[1];
-    if (!contentType) return null;
-    const base64Data = parts[1];
-    
-    // Content-Type 嗅探 (保持原有逻辑)
-    if (base64String.startsWith("data:image/jpeg")) { contentType = "image/jpeg"; }
-    else if (base64String.startsWith("data:image/png")) { contentType = "image/png"; }
-    else if (base64String.startsWith("data:image/gif")) { contentType = "image/gif"; }
-    else if (base64String.startsWith("data:image/webp")) { contentType = "image/webp"; }
-    else if (base64String.startsWith("data:image/svg+xml")) { contentType = "image/svg+xml"; }
-    else if (base64String.startsWith("data:image/bmp")) { contentType = "image/bmp"; }
-    else if (base64String.startsWith("data:image/tiff")) { contentType = "image/tiff"; }
-    else if (base64String.startsWith("data:image/x-icon")) { contentType = "image/x-icon"; }
-    
-    const blob = base64ToBlob(contentType, base64Data);
-    return { blob, contentType };
-  } catch (e) { console.error("Base64解析或Blob创建错误:", e); return null; }
-}
-
 async function randomString(len) {
   len = len || 5;
   let chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
@@ -110,7 +77,7 @@ async function is_url_exist(url_sha512, env) {
 }
 
 // 检查 load_kv 配置
-function handleKvCheckAndRespond(config, headers, commandType = "执行操作") {
+function handleKvCheck(config, headers, commandType = "执行操作") {
     if (!config.load_kv) {
         const errorMsg = commandType === "查询操作" 
             ? "错误: 载入kv功能未启用" 
@@ -148,11 +115,6 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
             response_data.error = `错误: 链接类型必须是有效的URL`; http_status = 400; 
             break;
           }
-        } else if (req_type === "img") {
-            if (!req_url || !req_url.startsWith("data:image/")) {
-              response_data.error = `错误: 图床类型必须是有效的Base64`; http_status = 400;
-              break;
-            }
         } else if (!["note"].includes(req_type)) {
           response_data.error = `错误: 未知的内容类型: ${req_type}`; http_status = 400;
           break;
@@ -160,36 +122,47 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         
         let final_key;
         http_status = 200;
+
+        // 检查自定义 Key 的冲突和保护，并立即返回响应
         if (config.custom_link && req_key) {
           if (isKeyProtected(req_key)) {
-            response_data = { status: 403, key: req_key, error: "错误: key在保护列表中" }; http_status = 403;
+            const response_data_403 = { status: 403, key: req_key, error: "错误: key在保护列表中" };
+            return new Response(JSON.stringify(response_data_403), { headers: json_response_header, status: 403 }); // 👈 立即返回
           } else if (!config.overwrite_kv && await env.LINKS.get(req_key) != null) {
-            response_data = { status: 409, key: req_key, error: "错误: 已存在的key" }; http_status = 409;
+            const response_data_409 = { status: 409, key: req_key, error: "错误: 已存在的key" };
+            return new Response(JSON.stringify(response_data_409), { headers: json_response_header, status: 409 }); // 👈 立即返回
           } else {
             await env.LINKS.put(req_key, req_url);
             final_key = req_key;
           }
-        } else if (config.unique_link) {
-          const url_sha512 = await sha512(req_url);
-          const existing_key = await is_url_exist(url_sha512, env);
-          if (existing_key) {
-            final_key = existing_key;
-          } else {
-            final_key = await save_url(req_url, env);
-            if (final_key) { await env.LINKS.put(url_sha512, final_key); }
+        }
+        
+        // 如果是随机 Key 或唯一链接模式，且未通过自定义 Key 逻辑处理，则根据配置生成 Key
+        if (!final_key) {
+          if (config.unique_link) {
+            const url_sha512 = await sha512(req_url);
+            const existing_key = await is_url_exist(url_sha512, env);
+            if (existing_key) {
+              final_key = existing_key;
+            } else {
+              final_key = await save_url(req_url, env);
+              if (final_key) { await env.LINKS.put(url_sha512, final_key); }
+            }
+          } else { 
+            final_key = await save_url(req_url, env); 
           }
-        } else { final_key = await save_url(req_url, env); }
+        }
         
         // 统一处理成功或KV写入失败的返回
-        if (final_key && http_status === 200) { 
-          response_data = { status: 200, key: final_key, error: "" };
-        } else if (!final_key && http_status === 200) {
-          response_data = { status: 507, key: "", error: "错误: 达到KV写入限制" }; http_status = 507;
+        if (final_key) { 
+          response_data = { status: 200, key: final_key, error: "" }; http_status = 200;
+        } else {
+            response_data = { status: 507, key: "", error: "错误: 达到KV写入限制" }; http_status = 507;
         }
         break;
         
       case "del":
-        const delCheck = handleKvCheckAndRespond(config, json_response_header, "删除操作");
+        const delCheck = handleKvCheck(config, json_response_header, "删除操作");
         if (delCheck) return delCheck;
 
         http_status = 200;
@@ -212,7 +185,7 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         break;
 
       case "delall":
-        const delAllCheck = handleKvCheckAndRespond(config, json_response_header, "删除操作");
+        const delAllCheck = handleKvCheck(config, json_response_header, "删除操作");
         if (delAllCheck) return delAllCheck;
 
         http_status = 200;
@@ -251,7 +224,7 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         break;
 
       case "qry":
-        const qryCheck = handleKvCheckAndRespond(config, json_response_header, "查询操作");
+        const qryCheck = handleKvCheck(config, json_response_header, "查询操作");
         if (qryCheck) return qryCheck;
 
         http_status = 200;
@@ -269,7 +242,7 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         break;
         
       case "qrycnt":
-        const qrycntCheck = handleKvCheckAndRespond(config, json_response_header, "查询计数操作");
+        const qrycntCheck = handleKvCheck(config, json_response_header, "查询计数操作");
         if (qrycntCheck) return qrycntCheck;
         
         http_status = 200;
@@ -285,7 +258,7 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         break;
         
       case "qryall":
-        const qryAllCheck = handleKvCheckAndRespond(config, json_response_header, "查询操作");
+        const qryAllCheck = handleKvCheck(config, json_response_header, "查询操作");
         if (qryAllCheck) return qryAllCheck;
 
         http_status = 200;
@@ -395,7 +368,7 @@ async function handleRequest(request, env, ctx) {
     return response404();
   }
 
-  // 处理 /短链 或 /图床Key 的访问
+  // 处理 /短链 的访问
   let path = decodeURIComponent(pathSegments[0] || "");
   const params = requestURL.search;
   if (protect_keylist.includes(path)) { return response404(); }
@@ -418,25 +391,9 @@ async function handleRequest(request, env, ctx) {
   if (params) { value = value + params }
 
   // 智能判断系统类型返回不同响应
-  const imageResult = getBlobAndContentType(value);
-  if (imageResult) {
-    try {
-      return new Response(imageResult.blob, {
-        headers: {
-          "Content-Type": imageResult.contentType,
-          "Cache-Control": "public, max-age=86400",
-          "Access-Control-Allow-Origin": "*",
-        }, status: 200
-      });
-    } catch (e) {
-      console.error("图片处理错误:", e);
-      return new Response(value, { headers: text_response_header, status: 500 });
-    }
-  }
-  else if (checkURL(value)) { // 判断是否为 URL，是则为短链接)
+  if (checkURL(value)) {
     return Response.redirect(value, 302);
-  } 
-  else {
-    return new Response(value, { headers: text_response_header, status: 200 });
+  } else {
+    return new Response(value, { headers: html_response_header, status: 200 });
   }
 }

@@ -39,7 +39,6 @@ function createCornerHTML() {
     // 定义模式切换列表
     const modes = [ // 此处为相对于管理路径
         { path: '/', icon: 'fas fa-link', text: '短链' }, 
-        { path: '/img', icon: 'fas fa-image', text: '图床' },
         { path: '/note', icon: 'fas fa-note-sticky', text: '笔记' },
     ];
     

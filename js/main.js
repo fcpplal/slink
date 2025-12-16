@@ -11,7 +11,7 @@ let api_password;
 const pathnameSegments = window.location.pathname.split("/").filter(p => p.length > 0);
 const modeFromPath = pathnameSegments.length >= 2 ? pathnameSegments[1] : (pathnameSegments.length === 1 ? 'link' : '');
 window.adminPath = pathnameSegments.length > 0 ? '/' + pathnameSegments[0] : '';
-window.current_mode = ['link', 'img', 'note'].includes(modeFromPath) ? modeFromPath : 'link';
+window.current_mode = ['note'].includes(modeFromPath) ? modeFromPath : 'link';
 window.visit_count_enabled = false; // 由后端配置决定
 
 // --- 实用工具函数 ---
@@ -100,23 +100,17 @@ function copyShortUrl(text, btnId) {
 // 定义所有模式及其属性
 const APP_MODES = {
   'link': { name: '短链', check: (value) => value.startsWith('http') },
-  'img': { name: '图床', check: (value) => value.startsWith('data:image/') },
-  'note': { name: '笔记', check: (value, isUrl, isImage) => !isUrl && !isImage }
+  'note': { name: '笔记', check: (value, isUrl) => !isUrl }
 };
-
 function getModeName(mode) {
   return APP_MODES[mode]?.name || '数据';
 }
-
 function isDataMode(value, mode) {
   if (!value) return false;
   const modeConfig = APP_MODES[mode];
   if (!modeConfig) return true;
   const isUrl = value.startsWith('http');
-  const isImage = value.startsWith('data:image/');
-  if (mode === 'note') {
-    return modeConfig.check(value, isUrl, isImage);
-  }
+  if (mode === 'note') { return modeConfig.check(value, isUrl); }
   return modeConfig.check(value);
 }
 

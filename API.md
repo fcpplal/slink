@@ -6,7 +6,7 @@
 - **请求方法:** `POST`
 - **请求头:** `Content-Type: application/json`
 - **API 秘钥:** `password` 字段，必须包含环境变量 `PASSWORD` 的值（默认 `apipass`）
-- **受保护 Key:** `["password", "link", "img", "note"]` 列表中的 Key 无法被 API 操作（添加、删除、查询）
+- **受保护 Key:** `["password", "link", "note"]` 列表中的 Key 无法被 API 操作（添加、删除、查询）
 
 ---
 
@@ -16,7 +16,7 @@
 |---|---|---|---|---|
 |**cmd**|是|操作命令。支持 `add`, `qry`, `del`, `delall`, `qrycnt`, `qryall`。|所有|字符串|
 |**password**|是|API 秘钥，用于权限验证。|所有|字符串|
-|**type**|`add` 必需|链接模式：`link`（短链）、`img`（图床）、`note`（记事本）。|`add`|字符串|
+|**type**|`add` 必需|链接模式：`link`（短链）、`note`（记事本）。|`add`|字符串|
 |**url**|`add` 必需|源内容：长链 URL、Base64 图片码或文本内容。|`add`|字符串|
 |**key**|否|Key 名称。用于自定义 Key (`add`) 或指定操作目标 (`qry`, `del` 等)。|`add`, `qry`, `del`, `delall`, `qrycnt`|字符串 (单个) 或 字符串数组 (批量)|
 
@@ -212,12 +212,11 @@ curl -X POST https://<worker_domain>/<ADMIN>
 
 ## 5. 直接访问 / 重定向 (非 API)
 
-当用户通过浏览器访问 Worker URL 时触发的功能。
+当用户通过浏览器访问 Worker URL 时触发的功能：
 
-| **访问路径**                                 | **行为**                                                     |
-| ---------------------------------------- | ---------------------------------------------------------- |
-| `https://<YOUR_WORKER_URL>/`             | 返回 `404` 页面                                                |
-| `https://<YOUR_WORKER_URL>/<ADMIN>`      | 返回短链管理页面                                                   |
-| `https://<YOUR_WORKER_URL>/<ADMIN>/img`  | 返回图床管理页面                                                   |
-| `https://<YOUR_WORKER_URL>/<ADMIN>/note` | 返回笔记页面（取决于前端文件）                                            |
-| `https://<YOUR_WORKER_URL>/短链key`        | 如果 Key 对应的值是 URL，则 302 重定向；如果是 Base64 图片，则直接显示图片；否则返回文本内容。 |
+| **访问路径**                              | **行为**                                |
+| ---------------------------------------- | --------------------------------------- |
+| `https://<YOUR_WORKER_URL>/`             | 返回 `404` 页面                          |
+| `https://<YOUR_WORKER_URL>/<ADMIN>`      | 返回短链管理页面    |
+| `https://<YOUR_WORKER_URL>/<ADMIN>/note` | 返回笔记页面（取决于前端文件）        |
+| `https://<YOUR_WORKER_URL>/短链key`      | 如果 Key 对应的值是 URL，则 302 重定向；否则返回文本内容 |
