@@ -352,12 +352,12 @@ async function handleRequest(request, env, ctx) {
   const config = {
     admin: env.ADMIN || 'admin', // 管理密码
     password: env.PASSWORD || 'apipass', // API秘钥
-    unique_link: env.UNIQUE_LINK !== 'false',
-    custom_link: env.CUSTOM_LINK !== 'false',
-    overwrite_kv: env.OVERWRITE_KV !== 'false',
-    snapchat_mode: env.SNAPCHAT_MODE === 'true',
-    visit_count: env.VISIT_COUNT === 'true',
-    load_kv: env.LOAD_KV !== 'false',
+    unique_link: env.UNIQUE_LINK === 'false' ? false : true, // 唯一链接
+    custom_link: env.CUSTOM_LINK === 'false' ? false : true, // 自定义链接
+    overwrite_kv: env.OVERWRITE_KV === 'false' ? false : true, // 覆盖KV
+    snapchat_mode: env.SNAPCHAT_MODE === 'true' ? true : false, // 阅后即焚
+    visit_count: env.VISIT_COUNT === 'true' ? true : false, // 访问计数
+    load_kv: env.LOAD_KV === 'false' ? false : true, // 加载KV
   };
 
   // 定义响应头
