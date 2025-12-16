@@ -54,7 +54,6 @@ function createCornerHTML() {
             if (mode.path === '/') {
                 finalPath = adminPathPrefix;
             } else {
-                if (prefix.endsWith('/')) { prefix = prefix.slice(0, -1); }
                 finalPath = adminPathPrefix + mode.path;
             }
         }
@@ -99,10 +98,10 @@ function initModeSelector() {
     // 处理模式选择项的点击事件
     modeItems.forEach(item => {
         item.addEventListener('click', function() {
-            const path = this.getAttribute('data-path'); // 从 data-path 获取已经计算好的完整路径
+            const path = this.getAttribute('data-path');
             if (path) { 
                 dropdown.classList.remove('active'); 
-                window.location.href = path; // 直接跳转到完整路径
+                window.location.href = path;
             }
         });
     });
