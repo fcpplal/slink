@@ -129,42 +129,42 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         break;
       }
 
-      let final_key;
+      let final_key = null;
       let final_type = req_type;
       http_status = 200;
 
-      // 检查自定义 Key 的冲突和保护，并立即返回响应
+      // 1. 处理自定义 Key (如果请求中提供了 key)
       if (config.custom_link && req_key) {
-        if (!config.overwrite_kv && (await env.LINKS.get(req_key)) != null) {
+        const existing_value = await env.LINKS.get(req_key);
+        if (!config.overwrite_kv && existing_value != null) {
           const response_data_409 = { status: 409, key: req_key, error: '错误: 已存在的key' };
           return new Response(JSON.stringify(response_data_409), { headers: json_response_header, status: 409 });
         } else {
           await env.LINKS.put(req_key, req_url);
-          await env.LINKS.put(final_type + ':' + req_key, req_key);
           final_key = req_key;
         }
       }
 
-      // 如果是随机 Key 或唯一链接模式，且未通过自定义 Key 逻辑处理，则根据配置生成 Key
+      // 2. 处理随机 Key 或唯一链接模式 (如果 final_key 仍未确定)
       if (!final_key) {
         if (config.unique_link) {
           const url_sha512 = await sha512(req_url);
           const existing_key = await is_url_exist(url_sha512, env);
           if (existing_key) {
-            final_key = existing_key;
+            final_key = existing_key; // Key 已经存在
           } else {
             final_key = await save_url(req_url, env);
-            if (final_key) {
-              await env.LINKS.put(url_sha512, final_key);
-              await env.LINKS.put(final_type + ':' + final_key, final_key);
-            }
+            if (final_key) await env.LINKS.put(url_sha512, final_key);
           }
         } else {
           final_key = await save_url(req_url, env);
         }
       }
 
-      // 统一处理成功或KV写入失败的返回
+      // 3. 统一处理：如果确定了 final_key，写入/更新模式 Key
+      if (final_key) await env.LINKS.put(final_type + ':' + final_key, final_key);
+
+      // 4. 统一处理成功或KV写入失败的返回
       if (final_key) {
         response_data = { status: 200, key: final_key, error: '' };
         http_status = 200;
@@ -224,9 +224,7 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
       else if (!has_key_array && !has_type) {
         const keyList = await env.LINKS.list();
         if (keyList?.keys) {
-          targetKeys = keyList.keys
-            .map((item) => item.name)
-            .filter((key) => !(isKeyProtected(key) || key.endsWith('-count') || key.length === 128 || key.includes(':')));
+          targetKeys = keyList.keys.map((item) => item.name).filter((key) => !(isKeyProtected(key) || key.endsWith('-count') || key.length === 128 || key.includes(':')));
         }
       }
 
